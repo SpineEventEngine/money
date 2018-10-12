@@ -1,0 +1,287 @@
+/*
+ * Copyright 2018, TeamDev. All rights reserved.
+ *
+ * Redistribution and use in source and/or binary forms, with or without
+ * modification, must retain the above copyright notice and the following
+ * disclaimer.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+buildscript {
+
+    // As long as `buildscript` section is always evaluated first,
+    // we need to apply explicitly here.
+    apply from: "$rootDir/version.gradle"
+    apply from: "$rootDir/config/gradle/dependencies.gradle"
+
+    repositories {
+        google()
+        maven { url = repos.gradlePlugins }
+        maven { url = repos.spine }
+        maven { url = repos.spineSnapshots }
+        mavenLocal()
+    }
+
+    //noinspection GroovyAssignabilityCheck
+    dependencies {
+        classpath deps.build.guava
+        classpath (deps.build.gradlePlugins.protobuf) {
+            // exclude an old Guava version
+            exclude group: 'com.google.guava'
+        }
+        classpath (deps.build.gradlePlugins.errorProne) {
+            // exclude an old Guava version
+            exclude group: 'com.google.guava'
+        }
+
+        classpath "io.spine.tools:spine-model-compiler:$spineBaseVersion"
+    }
+
+    configurations.all({
+        resolutionStrategy.cacheChangingModulesFor(0, 'seconds')
+    })
+}
+
+ext {
+    projectsToPublish = ["money"]
+}
+
+allprojects {
+    apply plugin: 'maven'
+    apply plugin: 'jacoco'
+    apply plugin: 'idea'
+    apply plugin: 'project-report'
+
+    group = 'io.spine'
+    
+    version = versionToPublish
+}
+
+subprojects {
+
+    buildscript {
+        repositories {
+            google()
+            maven { url = repos.gradlePlugins }
+            maven { url = repos.oldSpine }
+            maven { url = repos.oldSpineSnapshots }
+            maven { url = repos.spine }
+            maven { url = repos.spineSnapshots }
+            mavenLocal()
+        }
+
+        //noinspection GroovyAssignabilityCheck
+        dependencies {
+            classpath deps.build.guava
+            classpath(deps.build.gradlePlugins.protobuf) {
+                // exclude an old Guava version
+                exclude group: 'com.google.guava'
+            }
+        }
+
+        configurations.all({
+            resolutionStrategy.cacheChangingModulesFor(0, 'seconds')
+        })
+    }
+
+    project.ext {
+        spineProtobufPluginId = 'io.spine.tools.spine-model-compiler'
+
+        sourcesRootDir = "$projectDir/src"
+        generatedRootDir = "$projectDir/generated"
+
+        generatedJavaDir = "$generatedRootDir/main/java"
+        generatedTestJavaDir = "$generatedRootDir/test/java"
+
+        generatedJsDir = "$generatedRootDir/main/js"
+        
+        generatedSpineDir = "$generatedRootDir/main/spine"
+        generatedTestSpineDir = "$generatedRootDir/test/spine"
+    }
+
+    apply plugin: 'java-library'
+    apply plugin: 'net.ltgt.errorprone'
+    apply plugin: 'com.google.protobuf'
+    apply plugin: 'maven-publish'
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    repositories {
+        jcenter()
+        mavenCentral()
+        mavenLocal()
+
+        // Spine releases repository.
+        maven { url = repos.spine }
+
+        // Spine snapshots repository.
+        maven { url = repos.spineSnapshots }
+    }
+
+    dependencies {
+        errorprone deps.build.errorProneCore
+        errorproneJavac deps.build.errorProneJavac
+        // For dependencies config. based on version of Java, see:
+        //  https://github.com/epeee/junit-jupiter-extension-testing/blob/57b7ba75ab64ed8c229d2a5b14a954d6ae359189/gradle/errorprone.gradle
+
+        api deps.build.protobuf
+
+        implementation deps.build.guava
+        implementation deps.build.jsr305Annotations
+
+        // As a Library, we provide logging facade API, not specific logger bindings.
+        // Target apps are free to use any binding they need.
+        implementation deps.build.slf4j
+
+        testCompile deps.test.junit5Api
+        testCompile deps.test.hamcrest
+        testCompile deps.test.mockito
+        testCompile deps.test.guavaTestlib
+
+        testRuntime deps.test.junit5Runner
+    }
+
+    sourceSets {
+        main {
+            proto.srcDirs = ["$sourcesRootDir/main/proto"]
+            java.srcDirs = [generatedJavaDir,
+                            "$sourcesRootDir/main/java",
+                            generatedSpineDir]
+            resources.srcDirs = ["$sourcesRootDir/main/resources",
+                                 "$generatedRootDir/main/resources"]
+        }
+        test {
+            proto.srcDirs = ["$sourcesRootDir/test/proto"]
+            java.srcDirs = [generatedTestJavaDir,
+                            "$sourcesRootDir/test/java",
+                            generatedTestSpineDir]
+            resources.srcDirs = ["$sourcesRootDir/test/resources",
+                                 "$generatedRootDir/test/resources"]
+        }
+    }
+
+    test {
+        useJUnitPlatform {
+            includeEngines 'junit-jupiter'
+        }
+
+        /* Uncomment this block if you need to display console output during the Gradle build.
+        testLogging {
+            // Make sure output from standard out or error is shown in Gradle output.
+            showStandardStreams = true
+
+            // Or we use events method:
+            // events 'standard_out', 'standard_error'
+
+            // Or set property events:
+            events = ['standard_out', 'standard_error']
+
+            // Instead of string values we can
+            // use enum values:
+            // events org.gradle.api.tasks.testing.logging.TestLogEvent.STANDARD_OUT,
+            //        org.gradle.api.tasks.testing.logging.TestLogEvent.STANDARD_ERROR,
+        }
+        */
+    }
+
+    protobuf {
+        generatedFilesBaseDir = generatedRootDir
+        protoc {
+            artifact = deps.build.protoc
+        }
+
+        // The below code removes deprecation annotations from the code generated by
+        // Protobuf compiler.
+        // See details at the link below:
+        //    https://github.com/google/protobuf/issues/2054
+        generateProtoTasks {
+            all().each { final task ->
+                // Configures built-in outputs. 
+                // Each block generates a '--<name>_out' flag to the protoc command line.
+                // See https://github.com/google/protobuf-gradle-plugin
+                task.builtins {
+                    // Generates `--js_out` flag to the protoc command line.
+                    // See https://github.com/google/protobuf/blob/master/js/README.md
+                    js {
+                        option "library=spine-time-${project.version}"
+                    }
+                }
+            }
+        }
+    }
+
+    apply from: deps.scripts.testOutput
+    apply from: deps.scripts.javadocOptions
+    apply from: deps.scripts.javacArgs
+    
+    task sourceJar(type: Jar) {
+        from sourceSets.main.allJava
+        classifier "sources"
+    }
+
+    task testOutputJar(type: Jar) {
+        from sourceSets.test.output
+        classifier "test"
+    }
+
+    task javadocJar(type: Jar, dependsOn: 'javadoc') {
+        from ("$projectDir/build/docs/javadoc")
+        classifier "javadoc"
+    }
+
+    apply from: deps.scripts.filterInternalJavadocs
+
+    // Apply the same IDEA module configuration for each of sub-projects.
+    idea {
+        module {
+            generatedSourceDirs += file(generatedJsDir)
+            generatedSourceDirs += file(generatedJavaDir)
+            generatedSourceDirs += file(generatedSpineDir)
+            testSourceDirs += file(generatedTestJavaDir)
+            downloadJavadoc = true
+            downloadSources = true
+
+            iml {
+                beforeMerged { final module ->
+                    module.dependencies.clear()
+                }
+                whenMerged { final module ->
+                    module.dependencies*.exported = true
+                }
+            }
+        }
+    }
+}
+
+// IDEA project configuration.
+idea {
+    project {
+        ipr {
+            beforeMerged { final project ->
+                project.modulePaths.clear()
+            }
+            withXml { final provider ->
+                provider.node.component
+                        .find { it.@name == 'VcsDirectoryMappings' }
+                        .mapping.@vcs = 'Git'
+            }
+        }
+    }
+}
+
+// Aggregated coverage report across all subprojects.
+apply from: deps.scripts.jacoco
+
+apply from: deps.scripts.publish
