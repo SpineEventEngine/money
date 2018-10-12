@@ -45,7 +45,7 @@ class MoneyAmountTest extends UtilityClassTest<MoneyAmount> {
     void createPositiveValue() {
         long units = 639_100_000_000L;
 
-        Money money = MoneyAmount.of(Currency.USD, units, 0);
+        MoneyAmount money = MoneyAmount.of(Currency.USD, units, 0);
 
         assertEquals(Currency.USD, money.getCurrency());
         assertEquals(units, money.getUnits());
@@ -58,7 +58,7 @@ class MoneyAmountTest extends UtilityClassTest<MoneyAmount> {
         long units = -1;
         int nanos = 750_000_000;
 
-        Money money = MoneyAmount.of(Currency.EUR, units, nanos);
+        MoneyAmount money = MoneyAmount.of(Currency.EUR, units, nanos);
 
         assertEquals(Currency.EUR, money.getCurrency());
         assertEquals(units, money.getUnits());

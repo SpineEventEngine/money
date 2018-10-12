@@ -20,67 +20,34 @@
 
 package io.spine.money;
 
-import io.spine.annotation.Experimental;
+import io.spine.value.ValueHolder;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static io.spine.money.MoneyPreconditions.checkValid;
 
 /**
  * The utility class containing convenience methods for working with
  * {@link io.spine.money.Money Money}.
  */
-@Experimental
-public final class MoneyAmount {
+public final class MoneyAmount extends ValueHolder<Money> {
 
-    private static final int NANOS_MIN = -999_999_999;
-    private static final int NANOS_MAX = 999_999_999;
+    private static final long serialVersionUID = 0L;
 
-    /** Prevents instantiation of this utility class. */
-    private MoneyAmount() {
-    }
-
-
-    private static boolean isValid(int nanos) {
-        return nanos >= NANOS_MIN && nanos <= NANOS_MAX;
-    }
-
-    private static boolean isSameSign(long units, int nanos) {
-        if (units < 0 || nanos < 0) {
-            if (units > 0 || nanos > 0) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private static boolean isValid(Currency currency) {
-        return currency != Currency.CURRENCY_UNDEFINED &&
-                currency != Currency.UNRECOGNIZED;
-    }
-
-    private static boolean isValid(Currency currency, long units, int nanos) {
-        boolean result =
-                isValid(currency)
-                        && isValid(nanos)
-                        && isSameSign(units, nanos);
-
-        //TODO:2018-10-12:alexander.yevsyukov: Check that the currency supports minor units.
-        // If not, check that nanos is zero.
-        return result;
-    }
-
-    private static void checkValid(Currency currency, long units, int nanos) {
-        checkArgument(isValid(currency), "A currency must be defined.");
-        checkArgument(isValid(nanos),
-                      "Nanos (%s) must be in range [-999,999,999, +999,999,999].");
-        checkArgument(isSameSign(units, nanos),
-                      "`units` and `nanos` must be of the same sign.");
-        //TODO:2018-10-12:alexander.yevsyukov: Check that the currency supports minor units.
-        // If not, check that nanos is zero.
+    private MoneyAmount(Money amount) {
+        super(amount);
     }
 
     /**
-     * Creates a new {@code Money} instance.
+     * Creates a new amount of money with the passed value.
+     */
+    public static MoneyAmount of(Money value) {
+        checkNotNull(value);
+        checkValid(value);
+        return create(value);
+    }
+
+    /**
+     * Creates a new amount of money.
      *
      * @param currency
      *         the currency of the amount of money
@@ -90,15 +57,44 @@ public final class MoneyAmount {
      *         the number of (10^-9) units of the amount for representing amounts in
      *         minor currency units (for the currencies that support such amounts).
      */
-    public static Money of(Currency currency, long units, int nanos) {
+    public static MoneyAmount of(Currency currency, long units, int nanos) {
         checkNotNull(currency);
         checkValid(currency, units, nanos);
-        Money result = Money
+        Money amount = Money
                 .newBuilder()
                 .setCurrency(currency)
                 .setUnits(units)
                 .setNanos(nanos)
                 .build();
-        return result;
+        return create(amount);
+    }
+
+    private static MoneyAmount create(Money amount) {
+        return new MoneyAmount(amount);
+    }
+
+    /**
+     * Obtains the currency of the amount of money.
+     */
+    public Currency getCurrency() {
+        return value().getCurrency();
+    }
+
+    /**
+     * Obtains units value of the amount.
+     */
+    public long getUnits() {
+        return value().getUnits();
+    }
+
+    /**
+     * Obtains the number of (10^-9) units of the amount for representing amounts in
+     * minor currency units (for the currencies that support such amounts).
+     *
+     * <p>If the currency does not support minor currency units the value returned by
+     * this method for instances with such a currency will always be zero.
+     */
+    public int getNanos() {
+        return value().getNanos();
     }
 }
