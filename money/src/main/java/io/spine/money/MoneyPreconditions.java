@@ -43,9 +43,7 @@ final class MoneyPreconditions {
             return false;
         }
         if (units < 0 || nanos < 0) {
-            if (units > 0 || nanos > 0) {
-                return false;
-            }
+            return units <= 0 && nanos <= 0;
         }
         return true;
     }
