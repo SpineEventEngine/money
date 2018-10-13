@@ -51,7 +51,7 @@ class MoneyAmountTest {
 
         assertEquals(Currency.EUR, money.getCurrency());
         assertEquals(units, money.getUnits());
-        assertEquals(units, money.getNanos());
+        assertEquals(nanos, money.getNanos());
     }
 
     @Test
