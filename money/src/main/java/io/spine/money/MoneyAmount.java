@@ -26,8 +26,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static io.spine.money.MoneyPreconditions.checkValid;
 
 /**
- * The utility class containing convenience methods for working with
- * {@link io.spine.money.Money Money}.
+ * An amount of money.
+ *
+ * <p>This class wraps a {@link io.spine.money.Money Money} value, and allows to create
+ * monetary amounts.
  */
 public final class MoneyAmount extends ValueHolder<Money> {
 
