@@ -20,49 +20,38 @@
 
 package io.spine.money;
 
-import com.google.common.testing.NullPointerTester;
-import io.spine.testing.UtilityClassTest;
-import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("MoneyAmount utility class should")
-class MoneyAmountTest extends UtilityClassTest<MoneyAmount> {
-
-    MoneyAmountTest() {
-        super(MoneyAmount.class);
-    }
-
-    @Override
-    protected void configure(NullPointerTester tester) {
-        tester.setDefault(Currency.class, Currency.EUR);
-    }
+class MoneyAmountTest {
 
     @Test
     @DisplayName("create positive amounts")
     void createPositiveValue() {
         long units = 639_100_000_000L;
-
-        MoneyAmount money = MoneyAmount.of(Currency.USD, units, 0);
+        int nanos = 949_000_000;
+        MoneyAmount money = MoneyAmount.of(Currency.USD, units, nanos);
 
         assertEquals(Currency.USD, money.getCurrency());
         assertEquals(units, money.getUnits());
-        assertEquals(units, money.getNanos());
+        assertEquals(nanos, money.getNanos());
     }
 
     @Test
     @DisplayName("create negative value")
     void createNegativeValue() {
         long units = -1;
-        int nanos = 750_000_000;
+        int nanos = -750_000_000;
 
         MoneyAmount money = MoneyAmount.of(Currency.EUR, units, nanos);
 
         assertEquals(Currency.EUR, money.getCurrency());
         assertEquals(units, money.getUnits());
-        assertEquals(units, money.getNanos());
+        assertEquals(nanos, money.getNanos());
     }
 
     @Test
