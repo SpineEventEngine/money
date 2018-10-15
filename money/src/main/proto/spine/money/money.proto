@@ -35,7 +35,7 @@ import "google/protobuf/descriptor.proto";
 //
 // The `Money` type below is modeled after one defined in Google APIs.
 // For the original code see:
-//   https://raw.githubusercontent.com/googleapis/googleapis/master/google/type/money.proto)
+//   https://raw.githubusercontent.com/googleapis/googleapis/master/google/type/money.proto
 // But in our type we use enumeration instead of a string currency code to provide more information
 // about currencies for UI-related code.
 //
@@ -122,7 +122,7 @@ enum Currency {
         name: "Argentine Peso",
         symbol: "$",
         numeric_code: 32,
-		exponent_digits: 2 }];
+        exponent_digits: 2 }];
     AUD = 8 [(currency) = {
         name: "Australian Dollar",
         symbol: "A$",
