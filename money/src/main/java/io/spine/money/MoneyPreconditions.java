@@ -60,9 +60,6 @@ final class MoneyPreconditions {
                 isValid(currency)
                         && isValid(nanos)
                         && isValid(units, nanos);
-
-        //TODO:2018-10-12:alexander.yevsyukov: Check that the currency supports minor units.
-        // If not, check that nanos is zero.
         return result;
     }
 
@@ -72,8 +69,6 @@ final class MoneyPreconditions {
                       "Nanos (%s) must be in range [-999,999,999, +999,999,999].");
         checkArgument(isValid(units, nanos),
                       "`units` and `nanos` must be of the same sign.");
-        //TODO:2018-10-12:alexander.yevsyukov: Check that the currency supports minor units.
-        // If not, check that nanos is zero.
     }
 
     static void checkValid(Money amount) {
