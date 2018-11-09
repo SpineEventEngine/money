@@ -7,6 +7,10 @@
 This library provides Protobuf definition for `Currency` and `Money` types, and 
 utilities for working with monetary. 
 
+## Experimental
+
+This library has experimental status, which means its API is likely to change in the near future.
+
 ## Supported Languages
 
 Currently the library supports only Java, with JavaScript and C++ being on the priority list.
