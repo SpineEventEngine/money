@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -18,39 +18,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-buildscript {
-
-    // As long as `buildscript` section is always evaluated first,
-    // we need to apply explicitly here.
+buildscript { final scriptHandler ->
     apply from: "$rootDir/version.gradle"
     apply from: "$rootDir/config/gradle/dependencies.gradle"
 
-    repositories {
-        google()
-        maven { url = repos.gradlePlugins }
-        maven { url = repos.spine }
-        maven { url = repos.spineSnapshots }
-        mavenLocal()
-    }
-
-    //noinspection GroovyAssignabilityCheck
+    defaultRepositories(scriptHandler)
     dependencies {
         classpath deps.build.guava
-        classpath (deps.build.gradlePlugins.protobuf) {
-            // exclude an old Guava version
-            exclude group: 'com.google.guava'
-        }
-        classpath (deps.build.gradlePlugins.errorProne) {
-            // exclude an old Guava version
-            exclude group: 'com.google.guava'
-        }
-
+        classpath deps.build.gradlePlugins.errorProne
+        classpath deps.build.gradlePlugins.protobuf
         classpath "io.spine.tools:spine-model-compiler:$spineBaseVersion"
     }
 
-    configurations.all({
-        resolutionStrategy.cacheChangingModulesFor(0, 'seconds')
-    })
+    forceConfiguration(scriptHandler)
 }
 
 ext {
@@ -66,33 +46,34 @@ allprojects {
     group = 'io.spine'
     
     version = versionToPublish
+
+    allprojects {
+        gradle.projectsEvaluated {
+            tasks.withType(JavaCompile) {
+                options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+            }
+        }
+    }
 }
 
 subprojects {
 
+    forceConfiguration(project)
+
     buildscript {
-        repositories {
-            google()
-            maven { url = repos.gradlePlugins }
-            maven { url = repos.oldSpine }
-            maven { url = repos.oldSpineSnapshots }
-            maven { url = repos.spine }
-            maven { url = repos.spineSnapshots }
-            mavenLocal()
-        }
+        final scriptHandler ->
+            apply from: "$rootDir/version.gradle"
+            apply from: "$rootDir/config/gradle/dependencies.gradle"
 
-        //noinspection GroovyAssignabilityCheck
-        dependencies {
-            classpath deps.build.guava
-            classpath(deps.build.gradlePlugins.protobuf) {
-                // exclude an old Guava version
-                exclude group: 'com.google.guava'
+            defaultRepositories(scriptHandler)
+            dependencies {
+                classpath deps.build.guava
+                classpath deps.build.gradlePlugins.errorProne
+                classpath deps.build.gradlePlugins.protobuf
+                classpath "io.spine.tools:spine-model-compiler:$spineBaseVersion"
             }
-        }
 
-        configurations.all({
-            resolutionStrategy.cacheChangingModulesFor(0, 'seconds')
-        })
+            forceConfiguration(scriptHandler)
     }
 
     project.ext {
@@ -114,6 +95,9 @@ subprojects {
     apply plugin: 'net.ltgt.errorprone'
     apply plugin: 'com.google.protobuf'
     apply plugin: 'maven-publish'
+
+    apply plugin: 'pmd'
+    apply from: deps.scripts.pmd
 
     java {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -178,24 +162,6 @@ subprojects {
         useJUnitPlatform {
             includeEngines 'junit-jupiter'
         }
-
-        /* Uncomment this block if you need to display console output during the Gradle build.
-        testLogging {
-            // Make sure output from standard out or error is shown in Gradle output.
-            showStandardStreams = true
-
-            // Or we use events method:
-            // events 'standard_out', 'standard_error'
-
-            // Or set property events:
-            events = ['standard_out', 'standard_error']
-
-            // Instead of string values we can
-            // use enum values:
-            // events org.gradle.api.tasks.testing.logging.TestLogEvent.STANDARD_OUT,
-            //        org.gradle.api.tasks.testing.logging.TestLogEvent.STANDARD_ERROR,
-        }
-        */
     }
 
     protobuf {
@@ -217,7 +183,7 @@ subprojects {
                     // Generates `--js_out` flag to the protoc command line.
                     // See https://github.com/google/protobuf/blob/master/js/README.md
                     js {
-                        option "library=spine-time-${project.version}"
+                        option "library=spine-money-${project.version}"
                     }
                 }
             }
