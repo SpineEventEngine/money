@@ -85,7 +85,7 @@ public final class MoneyAmount extends ValueHolder<Money> {
     /**
      * Obtains units value of the amount.
      */
-    public long getUnits() {
+    public long units() {
         return value().getUnits();
     }
 
@@ -96,7 +96,7 @@ public final class MoneyAmount extends ValueHolder<Money> {
      * <p>If the currency does not support minor currency units the value returned by
      * this method for instances with such a currency will always be zero.
      */
-    public int getNanos() {
+    public int nanos() {
         return value().getNanos();
     }
 }
