@@ -36,7 +36,7 @@ class MoneyAmountTest {
         int nanos = 949_000_000;
         MoneyAmount money = MoneyAmount.of(Currency.USD, units, nanos);
 
-        assertEquals(Currency.USD, money.getCurrency());
+        assertEquals(Currency.USD, money.currency());
         assertEquals(units, money.units());
         assertEquals(nanos, money.nanos());
     }
@@ -49,9 +49,21 @@ class MoneyAmountTest {
 
         MoneyAmount money = MoneyAmount.of(Currency.EUR, units, nanos);
 
-        assertEquals(Currency.EUR, money.getCurrency());
+        assertEquals(Currency.EUR, money.currency());
         assertEquals(units, money.units());
         assertEquals(nanos, money.nanos());
+    }
+
+    @Test
+    @DisplayName("create money amount holder out of money")
+    void createOfMoney() {
+        Money money = Money.vBuilder()
+                           .setCurrency(Currency.UAH)
+                           .setUnits(1)
+                           .build();
+        MoneyAmount amount = MoneyAmount.of(money);
+        assertEquals(money.getCurrency(), amount.currency());
+        assertEquals(money.getUnits(), amount.units());
     }
 
     @Test

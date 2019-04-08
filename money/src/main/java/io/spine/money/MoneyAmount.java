@@ -74,7 +74,7 @@ public final class MoneyAmount extends ValueHolder<Money> {
     /**
      * Obtains the currency of the amount of money.
      */
-    public Currency getCurrency() {
+    public Currency currency() {
         return value().getCurrency();
     }
 
