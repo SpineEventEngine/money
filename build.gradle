@@ -98,6 +98,7 @@ subprojects {
 
     apply plugin: 'pmd'
     apply from: deps.scripts.pmd
+    apply from: deps.scripts.projectLicenseReport
 
     java {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -251,5 +252,5 @@ idea {
 
 // Aggregated coverage report across all subprojects.
 apply from: deps.scripts.jacoco
-
 apply from: deps.scripts.publish
+apply from: deps.scripts.repoLicenseReport
