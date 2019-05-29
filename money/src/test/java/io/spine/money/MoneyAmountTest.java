@@ -57,10 +57,10 @@ class MoneyAmountTest {
     @Test
     @DisplayName("create money amount holder out of money")
     void createOfMoney() {
-        Money money = Money.vBuilder()
+        Money money = Money.newBuilder()
                            .setCurrency(Currency.UAH)
                            .setUnits(1)
-                           .build();
+                           .vBuild();
         MoneyAmount amount = MoneyAmount.of(money);
         assertEquals(money.getCurrency(), amount.currency());
         assertEquals(money.getUnits(), amount.units());
