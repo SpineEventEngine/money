@@ -1,6 +1,6 @@
 # Spine Money: Protobuf-based money types
 
-[![Build Status](https://travis-ci.org/SpineEventEngine/money.svg?branch=master)](https://travis-ci.org/SpineEventEngine/money)
+[![Build Status](https://travis-ci.com/SpineEventEngine/money.svg?branch=master)](https://travis-ci.com/SpineEventEngine/money)
 [![codecov](https://codecov.io/gh/SpineEventEngine/money/branch/master/graph/badge.svg)](https://codecov.io/gh/SpineEventEngine/money)
 [![license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](http://www.apache.org/licenses/LICENSE-2.0)
 
