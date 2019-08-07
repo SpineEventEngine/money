@@ -34,7 +34,3 @@ dependencies {
 
     testCompile group: 'io.spine', name: 'spine-testlib', version: spineBaseVersion
 }
-
-modelCompiler {
-    generateValidatingBuilders = true
-}

@@ -62,12 +62,12 @@ public final class MoneyAmount extends ValueHolder<Money> {
     public static MoneyAmount of(Currency currency, long units, int nanos) {
         checkNotNull(currency);
         checkValid(currency, units, nanos);
-        Money amount = MoneyVBuilder
+        Money amount = Money
                 .newBuilder()
                 .setCurrency(currency)
                 .setUnits(units)
                 .setNanos(nanos)
-                .build();
+                .vBuild();
         return new MoneyAmount(amount);
     }
 
