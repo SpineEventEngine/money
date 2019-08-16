@@ -22,6 +22,6 @@ To add a dependency to a Gradle project, please use the following:
 
 ```groovy
 dependencies {
-    compile "io.spine:spine-money:$spineVersion"
+    compile "io.spine:spine-money:1.0.1"
 }
 ```
