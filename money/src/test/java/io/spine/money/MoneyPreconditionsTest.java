@@ -138,6 +138,7 @@ class MoneyPreconditionsTest extends UtilityClassTest<MoneyPreconditions> {
         @Nested
         @DisplayName("is invalid if")
         class IsInvalidIf {
+
             @Test
             @DisplayName("have different sign")
             void haveDifferentSign() {
@@ -145,9 +146,103 @@ class MoneyPreconditionsTest extends UtilityClassTest<MoneyPreconditions> {
                 assertInvalid(Long.MAX_VALUE, NANOS_MIN);
             }
 
+            @Test
+            @DisplayName("both negative")
+            void nanosInvalid() {
+                assertInvalid(Long.MIN_VALUE, NANOS_MIN - 1);
+                assertInvalid(Long.MIN_VALUE, NANOS_MAX + 1);
+            }
+
             private void assertInvalid(long units, int nanos) {
                 assertFalse(MoneyPreconditions.isValid(units, nanos));
             }
+        }
+    }
+
+    @Nested
+    @DisplayName("check currency, units and nanos combination")
+    class CurrencyUnitsAndNanos {
+
+        @Nested
+        @DisplayName("is valid if")
+        class IsValidIf {
+
+            @Test
+            @DisplayName("currency is valid, unit and nanos are positive")
+            void currencyValidNanosUnitsPositive() {
+                assertValid(validCurrency(), Long.MAX_VALUE, NANOS_MAX);
+            }
+
+            @Test
+            @DisplayName("currency is valid, unit and nanos are negative")
+            void currencyValidNanosUnitsNegative() {
+                assertValid(validCurrency(), Long.MIN_VALUE, NANOS_MIN);
+            }
+
+            private void assertValid(Currency currency, long units, int nanos) {
+                assertTrue(MoneyPreconditions.isValid(currency, units, nanos));
+            }
+        }
+
+        @Nested
+        @DisplayName("is invalid if")
+        class IsInvalidIf {
+
+            @Test
+            @DisplayName("currency is invalid, unit and nanos are positive")
+            void currencyValidNanosUnitsPositive() {
+                assertInvalid(Currency.UNRECOGNIZED, Long.MAX_VALUE, NANOS_MAX);
+                assertInvalid(Currency.CURRENCY_UNDEFINED, Long.MAX_VALUE, NANOS_MAX);
+            }
+
+            @Test
+            @DisplayName("currency is invalid, unit and nanos are negative")
+            void currencyValidNanosUnitsNegative() {
+                assertInvalid(Currency.UNRECOGNIZED, Long.MIN_VALUE, NANOS_MIN);
+                assertInvalid(Currency.CURRENCY_UNDEFINED, Long.MIN_VALUE, NANOS_MIN);
+            }
+
+            @Test
+            @DisplayName("currency is valid, unit and nanos have different sign")
+            void currencyValidNanosUnitsHaveDifferentSign() {
+                assertInvalid(validCurrency(), Long.MIN_VALUE, NANOS_MAX);
+                assertInvalid(validCurrency(), Long.MAX_VALUE, NANOS_MIN);
+            }
+
+            @Test
+            @DisplayName("currency is valid, units are fine, but nanos out of bounds")
+            void currencyValidUnitsFineNanosOutOfBounds() {
+                assertInvalid(validCurrency(), Long.MIN_VALUE, NANOS_MIN - 1);
+                assertInvalid(validCurrency(), Long.MAX_VALUE, NANOS_MAX + 1);
+            }
+
+            @Test
+            @DisplayName("currency is invalid, units are fine, but nanos out of bounds")
+            void currencyInvalidUnitsFineNanosOutOfBounds() {
+                assertInvalid(Currency.CURRENCY_UNDEFINED, Long.MIN_VALUE, NANOS_MIN - 1);
+                assertInvalid(Currency.CURRENCY_UNDEFINED, Long.MAX_VALUE, NANOS_MAX + 1);
+
+                assertInvalid(Currency.UNRECOGNIZED, Long.MIN_VALUE, NANOS_MIN - 1);
+                assertInvalid(Currency.UNRECOGNIZED, Long.MAX_VALUE, NANOS_MAX + 1);
+            }
+
+            @Test
+            @DisplayName("currency is invalid, units and nanos have different sign")
+            void currencyInvalidUnitsNanosHaveDifferentSign() {
+                assertInvalid(Currency.CURRENCY_UNDEFINED, Long.MIN_VALUE, NANOS_MAX);
+                assertInvalid(Currency.CURRENCY_UNDEFINED, Long.MAX_VALUE, NANOS_MIN);
+
+                assertInvalid(Currency.UNRECOGNIZED, Long.MIN_VALUE, NANOS_MAX);
+                assertInvalid(Currency.UNRECOGNIZED, Long.MAX_VALUE, NANOS_MIN);
+            }
+
+            private void assertInvalid(Currency currency, long units, int nanos) {
+                assertFalse(MoneyPreconditions.isValid(currency, units, nanos));
+            }
+        }
+
+        private Currency validCurrency() {
+            return Currency.forNumber(Currency.AED_VALUE);
         }
     }
 }
