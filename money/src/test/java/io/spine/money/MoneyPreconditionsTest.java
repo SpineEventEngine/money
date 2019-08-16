@@ -32,7 +32,7 @@ import static io.spine.testing.TestValues.random;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@DisplayName("MoneyPreconditions utility class should")
+@DisplayName("`MoneyPreconditions` utility class should")
 class MoneyPreconditionsTest extends UtilityClassTest<MoneyPreconditions> {
 
     MoneyPreconditionsTest() {
