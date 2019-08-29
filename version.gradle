@@ -31,4 +31,5 @@ final def SPINE_VERSION = '1.0.1'
 ext {
     spineBaseVersion = SPINE_VERSION 
     versionToPublish = SPINE_VERSION
+    versionToPublishJs = SPINE_VERSION
 }

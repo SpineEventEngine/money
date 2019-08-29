@@ -28,6 +28,9 @@ apply plugin: spineProtobufPluginId
 apply from: deps.scripts.testArtifacts
 apply from: deps.scripts.modelCompiler
 
+apply plugin: 'io.spine.tools.proto-js-plugin'
+apply from: deps.scripts.jsConfigureProto
+
 dependencies {
     api deps.build.guava
     api group: 'io.spine', name: 'spine-base', version: spineBaseVersion
