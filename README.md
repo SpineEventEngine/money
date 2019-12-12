@@ -15,13 +15,12 @@ This library has experimental status, which means its API is likely to change in
 
 Currently the library supports only Java, with JavaScript and C++ being on the priority list.
 
- 
 ## Adding to a Gradle Project
 
 To add a dependency to a Gradle project, please use the following:
 
 ```groovy
 dependencies {
-    implementation "io.spine:spine-money:1.2.0"
+    implementation "io.spine:spine-money:1.3.0"
 }
 ```
