@@ -35,5 +35,5 @@ dependencies {
     api deps.build.guava
     api group: 'io.spine', name: 'spine-base', version: spineBaseVersion
 
-    testCompile group: 'io.spine', name: 'spine-testlib', version: spineBaseVersion
+    testImplementation group: 'io.spine', name: 'spine-testlib', version: spineBaseVersion
 }

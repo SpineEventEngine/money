@@ -39,7 +39,6 @@ ext {
 }
 
 allprojects {
-    apply plugin: 'maven'
     apply plugin: 'jacoco'
     apply plugin: 'idea'
     apply plugin: 'project-report'
@@ -129,11 +128,11 @@ subprojects {
         implementation deps.build.guava
         implementation deps.build.jsr305Annotations
 
-        testCompile deps.test.junit5Api
-        testCompile deps.test.hamcrest
-        testCompile deps.test.guavaTestlib
+        testImplementation deps.test.junit5Api
+        testImplementation deps.test.hamcrest
+        testImplementation deps.test.guavaTestlib
 
-        testRuntime deps.test.junit5Runner
+        testRuntimeOnly deps.test.junit5Runner
     }
 
     sourceSets {
