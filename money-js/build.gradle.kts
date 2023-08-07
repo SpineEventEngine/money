@@ -25,7 +25,6 @@ import io.spine.internal.gradle.report.license.LicenseReporter
 plugins {
     protobuf
     `java-library`
-    id("io.spine.mc-js")
 }
 LicenseReporter.generateReportIn(project)
 
