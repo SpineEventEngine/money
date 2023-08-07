@@ -25,9 +25,20 @@
         <ANNO name="org.junit.jupiter.api.Test" />
       </REPEAT_ANNOTATIONS>
     </JavaCodeStyleSettings>
-    <XML>
-      <option name="XML_LEGACY_SETTINGS_IMPORTED" value="true" />
-    </XML>
+    <JetCodeStyleSettings>
+      <option name="PACKAGES_IMPORT_LAYOUT">
+        <value>
+          <package name="" alias="false" withSubpackages="true" />
+          <package name="java" alias="false" withSubpackages="false" />
+          <package name="javax" alias="false" withSubpackages="false" />
+          <package name="kotlin" alias="false" withSubpackages="false" />
+          <package name="" alias="true" withSubpackages="true" />
+        </value>
+      </option>
+      <option name="NAME_COUNT_TO_USE_STAR_IMPORT" value="2147483647" />
+      <option name="NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS" value="2147483647" />
+      <option name="CODE_STYLE_DEFAULTS" value="KOTLIN_OFFICIAL" />
+    </JetCodeStyleSettings>
     <codeStyleSettings language="Dart">
       <option name="RIGHT_MARGIN" value="100" />
       <indentOptions>
@@ -58,6 +69,8 @@
       <option name="DOWHILE_BRACE_FORCE" value="3" />
       <option name="WHILE_BRACE_FORCE" value="3" />
       <option name="FOR_BRACE_FORCE" value="3" />
+      <option name="BUILDER_METHODS" value="newBuilder,builder,toBuilder,create,stream,singleTenant,multitenant" />
+      <option name="KEEP_BUILDER_METHODS_INDENTS" value="true" />
       <arrangement>
         <groups>
           <group>
@@ -70,6 +83,21 @@
           </group>
         </groups>
       </arrangement>
+    </codeStyleSettings>
+    <codeStyleSettings language="kotlin">
+      <option name="CODE_STYLE_DEFAULTS" value="KOTLIN_OFFICIAL" />
+    </codeStyleSettings>
+    <codeStyleSettings language="protobuf">
+      <indentOptions>
+        <option name="INDENT_SIZE" value="4" />
+        <option name="TAB_SIZE" value="4" />
+      </indentOptions>
+    </codeStyleSettings>
+    <codeStyleSettings language="prototext">
+      <indentOptions>
+        <option name="INDENT_SIZE" value="4" />
+        <option name="TAB_SIZE" value="4" />
+      </indentOptions>
     </codeStyleSettings>
   </code_scheme>
 </component>
