@@ -45,8 +45,11 @@ protobuf {
     protoc {
         // Temporarily use this version, since 3.21.x is known to provide
         // a broken `protoc-gen-js` artifact.
-        // See https://github.com/protocolbuffers/protobuf-javascript/issues/127.
+        // See the following links for details:
         //
+        // https://github.com/protocolbuffers/protobuf-javascript/issues/127.
+        // https://gist.github.com/Siedlerchr/0fd9e463f6ffa2ea3c4b5e5ae3e5889e
+
         // Once it is addressed, this artifact should be `Protobuf.compiler`.
         artifact = "com.google.protobuf:protoc:3.19.6"
     }
