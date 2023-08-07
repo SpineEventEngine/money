@@ -65,8 +65,10 @@ fun JsPlugins.protobuf() {
 
                     remove("java")
 
-                    // For information on JavaScript code generation please see
-                    // https://github.com/google/protobuf/blob/master/js/README.md
+                    // For information on JavaScript code generation please see:
+                    // https://github.com/protocolbuffers/protobuf-javascript/blob/main/README.md
+                    // https://github.com/protocolbuffers/protobuf-javascript/issues/127
+                    // https://gist.github.com/Siedlerchr/0fd9e463f6ffa2ea3c4b5e5ae3e5889e
 
                     id("js") {
                         option("import_style=commonjs")
