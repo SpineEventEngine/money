@@ -20,9 +20,9 @@ Currently, the library supports only Java, with JavaScript and Dart being on the
 
 To add a dependency to a Gradle project, please use the following:
 
-```groovy
+```kotlin
 dependencies {
-    implementation "io.spine:spine-money:1.5.0"
+    implementation("io.spine:spine-money:$version") 
 }
 ```
 
