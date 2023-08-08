@@ -1,5 +1,11 @@
 #
-# Copyright 2018, TeamDev. All rights reserved.
+# Copyright 2022, TeamDev. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Redistribution and use in source and/or binary forms, with or without
 # modification, must retain the above copyright notice and the following
@@ -26,18 +32,22 @@
 # Therefore, instructions below are superset of instructions required for all the projects.
 
 # IntelliJ IDEA modules and interim config files.
+*.iml
 .idea/*.xml
 .idea/.name
-.idea/libraries/**
-.idea/modules/**
+.idea/artifacts
+.idea/libraries
+.idea/modules
+.idea/shelf
 
 # Do not ignore the following IDEA settings
 !.idea/misc.xml
-!.idea/codeStyles/codeStyleConfig.xml
-!.idea/codeStyles/Project.xml
+!.idea/codeStyleSettings.xml
+!.idea/codeStyles/
+!.idea/copyright/
 
 # Gradle interim configs
-.gradle/**
+**/.gradle/**
 
 # Generated source code
 **/generated/**
@@ -66,7 +76,8 @@ gradle-app.setting
 # Spine model compiler auto-generated resources
 /tools/gradle-plugins/model-compiler/src/main/resources/spine-protoc.gradle
 
-# Credentials to Maven repositories and Google Cloud Storage used for Travis build reports
+# Login details to Maven repository.
+# Each workstation should have developer's login defined in this file.
 credentials.tar
 credentials.properties
 cloudrepo.properties
@@ -85,3 +96,8 @@ gcs-auth-key.json
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+
+.packages
+pubspec.lock
+
+money-js/node_modules

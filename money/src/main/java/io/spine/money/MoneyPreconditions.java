@@ -54,17 +54,17 @@ final class MoneyPreconditions {
     }
 
     static boolean isValid(Currency currency, long units, int nanos) {
-        boolean result =
-                isValid(currency)
-                        && isValid(nanos)
-                        && isValid(units, nanos);
-        return result;
+        var validCurrency = isValid(currency);
+        var validNanos = isValid(nanos);
+        var validUnits = isValid(units, nanos);
+        return validCurrency && validNanos && validUnits;
     }
 
     static void checkValid(Currency currency, long units, int nanos) {
         checkArgument(isValid(currency), "A currency must be defined.");
         checkArgument(isValid(nanos),
-                      "Nanos (%s) must be in range [-999,999,999, +999,999,999].");
+                      "Nanos (%s) must be in range [-999,999,999, +999,999,999].",
+                      nanos);
         checkArgument(isValid(units, nanos),
                       "`units` and `nanos` must be of the same sign.");
     }

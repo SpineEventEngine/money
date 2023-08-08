@@ -61,7 +61,7 @@ class MoneyAmountTest {
                 .newBuilder()
                 .setCurrency(Currency.UAH)
                 .setUnits(1)
-                .vBuild();
+                .build();
         MoneyAmount amount = MoneyAmount.of(money);
         assertEquals(money.getCurrency(), amount.currency());
         assertEquals(money.getUnits(), amount.units());
