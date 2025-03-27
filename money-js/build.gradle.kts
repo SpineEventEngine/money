@@ -1,5 +1,11 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2025, TeamDev. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -20,7 +26,7 @@
 
 import com.google.protobuf.gradle.id
 import com.google.protobuf.gradle.remove
-import io.spine.internal.gradle.report.license.LicenseReporter
+import io.spine.gradle.report.license.LicenseReporter
 
 plugins {
     protobuf
