@@ -26,7 +26,7 @@
  * as we want to manage the versions in a single source.
  */
 
-val moneyVersion = "2.0.0-SNAPSHOT.01"
+val moneyVersion = "2.0.0-SNAPSHOT.10"
 
 val versionToPublish: String by extra(moneyVersion)
 val versionToPublishJs: String by extra(moneyVersion)
