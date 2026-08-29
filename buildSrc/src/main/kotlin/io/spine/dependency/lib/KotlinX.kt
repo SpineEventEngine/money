@@ -1,5 +1,5 @@
 /*
- * Copyright 2025, TeamDev. All rights reserved.
+ * Copyright 2026, TeamDev. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,18 +27,34 @@
 package io.spine.dependency.lib
 
 @Suppress("unused", "ConstPropertyName")
+@Deprecated(
+    message = "Please use `KotlinX` from `io.spine.dependency.kotlinx` package",
+    replaceWith = ReplaceWith(
+        expression = "KotlinX",
+        imports = ["io.spine.dependency.kotlinx.KotlinX"]
+    )
+)
 object KotlinX {
 
     const val group = "org.jetbrains.kotlinx"
 
+    @Deprecated(
+        message = "Please use `Coroutines` from the `io.spine.dependency.kotlinx` package",
+        replaceWith = ReplaceWith(
+            expression = "Coroutines",
+            imports = ["io.spine.dependency.kotlinx.Coroutines"]
+        )
+    )
     object Coroutines {
 
         // https://github.com/Kotlin/kotlinx.coroutines
-        const val version = "1.10.1"
-        const val bom = "$group:kotlinx-coroutines-bom:$version"
-        const val core = "$group:kotlinx-coroutines-core:$version"
-        const val coreJvm = "$group:kotlinx-coroutines-core-jvm:$version"
-        const val jdk8 = "$group:kotlinx-coroutines-jdk8:$version"
-        const val test = "$group:kotlinx-coroutines-test:$version"
+        val version = io.spine.dependency.kotlinx.Coroutines.version
+        val bom = "$group:kotlinx-coroutines-bom:$version"
+        val core = "$group:kotlinx-coroutines-core:$version"
+        val coreJvm = "$group:kotlinx-coroutines-core-jvm:$version"
+        val jdk8 = "$group:kotlinx-coroutines-jdk8:$version"
+        val debug = "$group:kotlinx-coroutines-debug:$version"
+        val test = "$group:kotlinx-coroutines-test:$version"
+        val testJvm = "$group:kotlinx-coroutines-test-jvm:$version"
     }
 }
