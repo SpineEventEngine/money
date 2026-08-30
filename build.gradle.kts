@@ -182,6 +182,11 @@ allprojects {
                         )) {
                         useVersion(io.spine.dependency.local.Base.version)
                     }
+                    // gRPC members arrive version-less through the Spine
+                    // artifacts; this classpath honours rules, not platforms.
+                    if (requested.group == "io.grpc") {
+                        useVersion(io.spine.dependency.lib.Grpc.version)
+                    }
                 }
                 force(
                     KotlinPoet.lib,
