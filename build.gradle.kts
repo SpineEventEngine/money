@@ -66,11 +66,9 @@ buildscript {
 
                     validation.runtime,
                     jackson.annotations,
+                    // The other Jackson 3 members are BOM-managed and carry
+                    // no version of their own, so the BOM is what is forced.
                     jackson.bom,
-                    // BOM-managed in Jackson 3: members carry no version,
-                    // so the BOM is what can be forced.
-                    jackson.bom,
-                    jackson.moduleKotlin
                 )
             }
         }
