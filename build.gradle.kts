@@ -58,6 +58,12 @@ buildscript {
                 val coroutines = io.spine.dependency.lib.Coroutines
                 val validation = io.spine.dependency.local.Validation
                 val jackson = io.spine.dependency.lib.Jackson
+                // The 2.x submodules need their own alignment: the BOM alone
+                // does not settle versions the refresh-era plugins request.
+                io.spine.dependency.lib.JacksonV2.Core.forceArtifacts(project, this@all, this@resolutionStrategy)
+                io.spine.dependency.lib.JacksonV2.DataType.forceArtifacts(project, this@all, this@resolutionStrategy)
+                io.spine.dependency.lib.JacksonV2.DataFormat.forceArtifacts(project, this@all, this@resolutionStrategy)
+                io.spine.dependency.lib.JacksonV2.Module.forceArtifacts(project, this@all, this@resolutionStrategy)
                 force(
                     coroutines.bom,
                     coroutines.core,
