@@ -148,6 +148,15 @@ allprojects {
         all {
             exclude("io.spine:spine-validate")
             resolutionStrategy {
+                // The refresh-era plugins and their transitive dependencies
+                // bring many Jackson 2.x artifacts at more than one patch
+                // level; align the whole family in one rule rather than
+                // enumerating coordinates.
+                eachDependency {
+                    if (requested.group.startsWith("com.fasterxml.jackson")) {
+                        useVersion(io.spine.dependency.lib.JacksonV2.version)
+                    }
+                }
                 force(
                     KotlinPoet.lib,
 
