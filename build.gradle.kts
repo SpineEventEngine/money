@@ -65,6 +65,12 @@ buildscript {
                 io.spine.dependency.lib.JacksonV2.DataFormat.forceArtifacts(project, this@all, this@resolutionStrategy)
                 io.spine.dependency.lib.JacksonV2.Module.forceArtifacts(project, this@all, this@resolutionStrategy)
                 force(
+                    // Policy: force the Kotlin runtime at the toolchain
+                    // version over the Gradle-embedded one — refresh-era
+                    // plugin jars require it.
+                    io.spine.dependency.lib.Kotlin.bom,
+                    "org.jetbrains.kotlin:kotlin-stdlib:${io.spine.dependency.lib.Kotlin.runtimeVersion}",
+                    "org.jetbrains.kotlin:kotlin-reflect:${io.spine.dependency.lib.Kotlin.runtimeVersion}",
                     coroutines.bom,
                     coroutines.core,
                     coroutines.coreJvm,
