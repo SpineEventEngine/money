@@ -137,8 +137,7 @@ plugins {
 
 spinePublishing {
     modules = setOf(
-        "money",
-        "money-js"
+        "money"
     )
     destinations = with(PublishingRepos) {
         setOf(

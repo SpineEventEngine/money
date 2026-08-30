@@ -29,4 +29,3 @@
 val moneyVersion = "2.0.0-SNAPSHOT.11"
 
 extra.set("versionToPublish", moneyVersion)
-extra.set("versionToPublishJs", moneyVersion)
