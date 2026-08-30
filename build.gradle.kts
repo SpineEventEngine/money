@@ -180,8 +180,11 @@ allprojects {
     }
 }
 
+// Kover must be applied while the project is still configurable, so it is
+// invoked here rather than from `gradle.projectsEvaluated`.
+KoverConfig.applyTo(project)
+
 gradle.projectsEvaluated {
-    KoverConfig.applyTo(project)
     LicenseReporter.mergeAllReports(project)
     PomGenerator.applyTo(project)
 }
