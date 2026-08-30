@@ -152,9 +152,6 @@ allprojects {
                     KotlinPoet.lib,
 
                     Coroutines.bom,
-                    Coroutines.test,
-                    Coroutines.testJvm,
-                    Coroutines.jdk8,
 
                     // Floor artifacts request the pre-refresh versions;
                     // the Protobuf runtime must never be older than the
