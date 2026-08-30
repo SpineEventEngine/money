@@ -184,7 +184,8 @@ allprojects {
                     }
                     // gRPC members arrive version-less through the Spine
                     // artifacts; this classpath honours rules, not platforms.
-                    if (requested.group == "io.grpc") {
+                    if (requested.group == "io.grpc"
+                        && !requested.name.startsWith("grpc-kotlin")) {
                         useVersion(io.spine.dependency.lib.Grpc.version)
                     }
                 }
