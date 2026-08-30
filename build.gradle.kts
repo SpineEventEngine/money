@@ -63,6 +63,18 @@ buildscript {
                 val coroutines = io.spine.dependency.lib.Coroutines
                 val validation = io.spine.dependency.local.Validation
                 val jackson = io.spine.dependency.lib.Jackson
+                // Align the Spine base family with the published floor: the
+                // locally built Compiler pulls `.442` transitives that exist
+                // only in Maven Local, which this classpath cannot use.
+                eachDependency {
+                    if (requested.group == "io.spine"
+                        && requested.name in setOf(
+                            "spine-base", "spine-annotations",
+                            "spine-environment", "spine-format"
+                        )) {
+                        useVersion(io.spine.dependency.local.Base.version)
+                    }
+                }
                 // The 2.x submodules need their own alignment: the BOM alone
                 // does not settle versions the refresh-era plugins request.
                 io.spine.dependency.lib.JacksonV2.Core.forceArtifacts(project, this@all, this@resolutionStrategy)
