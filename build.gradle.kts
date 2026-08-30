@@ -32,13 +32,13 @@ import io.spine.dependency.lib.Jackson
 import io.spine.dependency.lib.KotlinPoet
 import io.spine.dependency.local.Base
 import io.spine.dependency.local.Logging
-import io.spine.dependency.local.ProtoData
+import io.spine.dependency.local.Compiler
 import io.spine.dependency.local.ToolBase
 import io.spine.dependency.local.Validation
 import io.spine.dependency.test.JUnit
 import io.spine.gradle.publish.PublishingRepos
 import io.spine.gradle.publish.spinePublishing
-import io.spine.gradle.report.coverage.JacocoConfig
+import io.spine.gradle.report.coverage.KoverConfig
 import io.spine.gradle.report.license.LicenseReporter
 import io.spine.gradle.report.pom.PomGenerator
 import io.spine.gradle.standardToSpineSdk
@@ -46,12 +46,6 @@ import io.spine.gradle.standardToSpineSdk
 buildscript {
     standardSpineSdkRepositories()
     doForceVersions(configurations)
-
-    dependencies {
-        classpath(io.spine.dependency.local.McJava.pluginLib)
-        // TODO: Define McJs dependency object.
-        classpath("io.spine.tools:spine-mc-js:2.0.0-SNAPSHOT.130")
-    }
 
     configurations {
         all {
@@ -82,7 +76,7 @@ buildscript {
 }
 
 repositories {
-    // Required to grab the dependencies for `JacocoConfig`.
+    // Required to grab the dependencies for `KoverConfig`.
     standardToSpineSdk()
 }
 
@@ -134,11 +128,18 @@ allprojects {
                     Coroutines.testJvm,
                     Coroutines.jdk8,
 
+                    // Floor artifacts request the pre-refresh versions;
+                    // the Protobuf runtime must never be older than the
+                    // refreshed gencode.
+                    io.spine.dependency.kotlinx.Coroutines.bom,
+                    io.spine.dependency.kotlinx.AtomicFu.lib,
+                    io.spine.dependency.lib.Protobuf.javaLib,
+                    io.spine.dependency.lib.Caffeine.lib,
                     Base.lib,
                     ToolBase.lib,
                     Logging.lib,
                     Logging.middleware,
-                    ProtoData.api,
+                    Compiler.api,
                     Validation.runtime,
                     Dokka.BasePlugin.lib,
                     Jackson.databind,
@@ -150,7 +151,7 @@ allprojects {
 }
 
 gradle.projectsEvaluated {
-    JacocoConfig.applyTo(project)
+    KoverConfig.applyTo(project)
     LicenseReporter.mergeAllReports(project)
     PomGenerator.applyTo(project)
 }
