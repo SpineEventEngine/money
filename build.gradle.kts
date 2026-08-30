@@ -142,7 +142,9 @@ allprojects {
                     Compiler.api,
                     Validation.runtime,
                     Dokka.BasePlugin.lib,
-                    Jackson.databind,
+                    // The Jackson 3 object's members are BOM-managed and
+                    // carry no version, so the BOM is what can be forced.
+                    Jackson.bom,
                     JUnit.runner,
                 )
             }
