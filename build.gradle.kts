@@ -159,6 +159,17 @@ allprojects {
                         && requested.name != "jackson-annotations") {
                         useVersion(io.spine.dependency.lib.JacksonV2.version)
                     }
+                    // The plugin-managed `spineCompiler` classpath does not
+                    // honour `force`, so the Base family is aligned by rule
+                    // as well: the wave's fresh Base meets the floor that
+                    // still-published artifacts request.
+                    if (requested.group == "io.spine"
+                        && requested.name in setOf(
+                            "spine-base", "spine-annotations",
+                            "spine-environment", "spine-format"
+                        )) {
+                        useVersion(io.spine.dependency.local.Base.version)
+                    }
                 }
                 force(
                     KotlinPoet.lib,
