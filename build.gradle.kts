@@ -131,7 +131,6 @@ allprojects {
                     io.spine.dependency.lib.Protobuf.javaLib,
                     io.spine.dependency.lib.Caffeine.lib,
                     Base.lib,
-                    ToolBase.lib,
                     Logging.lib,
                     Logging.middleware,
                     Compiler.api,
