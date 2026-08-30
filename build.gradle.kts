@@ -68,6 +68,8 @@ buildscript {
                 io.spine.dependency.lib.JacksonV2.DataType.forceArtifacts(project, this@all, this@resolutionStrategy)
                 io.spine.dependency.lib.JacksonV2.DataFormat.forceArtifacts(project, this@all, this@resolutionStrategy)
                 io.spine.dependency.lib.JacksonV2.Module.forceArtifacts(project, this@all, this@resolutionStrategy)
+                // Jackson 2.x artifacts that only the IntelliJ Platform brings.
+                io.spine.dependency.lib.JacksonV2.Junior.forceArtifacts(project, this@all, this@resolutionStrategy)
                 force(
                     // Policy: force the Kotlin runtime at the toolchain
                     // version over the Gradle-embedded one — refresh-era
