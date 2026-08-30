@@ -153,7 +153,10 @@ allprojects {
                 // level; align the whole family in one rule rather than
                 // enumerating coordinates.
                 eachDependency {
-                    if (requested.group.startsWith("com.fasterxml.jackson")) {
+                    // `jackson-annotations` keeps its own version line, so it
+                    // is left to the value the dependency object declares.
+                    if (requested.group.startsWith("com.fasterxml.jackson")
+                        && requested.name != "jackson-annotations") {
                         useVersion(io.spine.dependency.lib.JacksonV2.version)
                     }
                 }
