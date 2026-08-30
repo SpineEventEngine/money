@@ -69,6 +69,8 @@ buildscript {
                     // version over the Gradle-embedded one — refresh-era
                     // plugin jars require it.
                     io.spine.dependency.lib.Kotlin.bom,
+                    // gRPC members are BOM-managed too.
+                    io.spine.dependency.lib.Grpc.bom,
                     "org.jetbrains.kotlin:kotlin-stdlib:${io.spine.dependency.lib.Kotlin.runtimeVersion}",
                     "org.jetbrains.kotlin:kotlin-reflect:${io.spine.dependency.lib.Kotlin.runtimeVersion}",
                     coroutines.bom,
