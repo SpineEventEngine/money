@@ -74,6 +74,13 @@ buildscript {
                     // The other Jackson 3 members are BOM-managed and carry
                     // no version of their own, so the BOM is what is forced.
                     jackson.bom,
+                    // The refresh-era plugins bring the 2.x line as well, and
+                    // the wave's fresh Time meets the floor requested by
+                    // still-published artifacts.
+                    io.spine.dependency.lib.JacksonV2.bom,
+                    io.spine.dependency.local.Time.lib,
+                    io.spine.dependency.local.Time.javaExtensions,
+                    io.spine.dependency.local.Base.environment,
                 )
             }
         }
