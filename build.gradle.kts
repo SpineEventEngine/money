@@ -81,10 +81,9 @@ buildscript {
                     io.spine.dependency.lib.Caffeine.lib,
                     "org.jetbrains.kotlin:kotlin-stdlib:${io.spine.dependency.lib.Kotlin.runtimeVersion}",
                     "org.jetbrains.kotlin:kotlin-reflect:${io.spine.dependency.lib.Kotlin.runtimeVersion}",
+                    // Only the BOM carries a version; the members are
+                    // BOM-managed and cannot be forced by coordinate.
                     coroutines.bom,
-                    coroutines.core,
-                    coroutines.coreJvm,
-                    coroutines.jdk8,
 
                     io.spine.dependency.local.Base.lib,
                     io.spine.dependency.local.ToolBase.lib,
@@ -115,8 +114,10 @@ repositories {
 }
 
 plugins {
+    // Gives the aggregator root the lifecycle tasks (`build`, `check`, ...)
+    // that the shared reporting helpers expect to find.
+    base
     idea
-    jacoco
     `gradle-doctor`
     `project-report`
 }
@@ -150,9 +151,6 @@ allprojects {
                     KotlinPoet.lib,
 
                     Coroutines.bom,
-                    Coroutines.core,
-                    Coroutines.coreJvm,
-                    Coroutines.debug,
                     Coroutines.test,
                     Coroutines.testJvm,
                     Coroutines.jdk8,
