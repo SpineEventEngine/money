@@ -139,7 +139,7 @@ allprojects {
                     // The Jackson 3 object's members are BOM-managed and
                     // carry no version, so the BOM is what can be forced.
                     Jackson.bom,
-                    JUnit.runner,
+                    JUnit.bom,
                 )
             }
         }
