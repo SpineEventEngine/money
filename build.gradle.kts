@@ -186,7 +186,8 @@ allprojects {
                     // toolchain version everywhere.
                     if (requested.group == "org.jetbrains.kotlin"
                         && (requested.name.startsWith("kotlin-stdlib")
-                            || requested.name == "kotlin-reflect")) {
+                            || requested.name == "kotlin-reflect"
+                            || requested.name == "kotlin-bom")) {
                         useVersion(io.spine.dependency.lib.Kotlin.runtimeVersion)
                     }
                     // gRPC members arrive version-less through the Spine
