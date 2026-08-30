@@ -27,7 +27,7 @@
 @file:Suppress("RemoveRedundantQualifierName")
 
 import io.spine.dependency.build.Dokka
-import io.spine.dependency.lib.Coroutines
+import io.spine.dependency.kotlinx.Coroutines
 import io.spine.dependency.lib.Jackson
 import io.spine.dependency.lib.KotlinPoet
 import io.spine.dependency.local.Base
@@ -41,7 +41,7 @@ import io.spine.gradle.publish.spinePublishing
 import io.spine.gradle.report.coverage.KoverConfig
 import io.spine.gradle.report.license.LicenseReporter
 import io.spine.gradle.report.pom.PomGenerator
-import io.spine.gradle.standardToSpineSdk
+import io.spine.gradle.repo.standardToSpineSdk
 
 buildscript {
     standardSpineSdkRepositories()
