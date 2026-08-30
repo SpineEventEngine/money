@@ -31,17 +31,16 @@ import io.spine.dependency.kotlinx.Coroutines
 import io.spine.dependency.lib.Jackson
 import io.spine.dependency.lib.KotlinPoet
 import io.spine.dependency.local.Base
-import io.spine.dependency.local.Logging
 import io.spine.dependency.local.Compiler
-import io.spine.dependency.local.ToolBase
+import io.spine.dependency.local.Logging
 import io.spine.dependency.local.Validation
 import io.spine.dependency.test.JUnit
 import io.spine.gradle.publish.PublishingRepos
 import io.spine.gradle.publish.spinePublishing
+import io.spine.gradle.repo.standardToSpineSdk
 import io.spine.gradle.report.coverage.KoverConfig
 import io.spine.gradle.report.license.LicenseReporter
 import io.spine.gradle.report.pom.PomGenerator
-import io.spine.gradle.repo.standardToSpineSdk
 
 buildscript {
     standardSpineSdkRepositories()
@@ -60,7 +59,7 @@ buildscript {
     configurations {
         all {
             resolutionStrategy {
-                val coroutines = io.spine.dependency.lib.Coroutines
+                val coroutines = io.spine.dependency.kotlinx.Coroutines
                 val validation = io.spine.dependency.local.Validation
                 val jackson = io.spine.dependency.lib.Jackson
                 // Align the Spine base family with the published floor: the
@@ -75,14 +74,17 @@ buildscript {
                         useVersion(io.spine.dependency.local.Base.version)
                     }
                 }
+                val cfg = this@all
+                val rs = this@resolutionStrategy
+                val kotlinRuntime = io.spine.dependency.lib.Kotlin.runtimeVersion
                 // The 2.x submodules need their own alignment: the BOM alone
                 // does not settle versions the refresh-era plugins request.
-                io.spine.dependency.lib.JacksonV2.Core.forceArtifacts(project, this@all, this@resolutionStrategy)
-                io.spine.dependency.lib.JacksonV2.DataType.forceArtifacts(project, this@all, this@resolutionStrategy)
-                io.spine.dependency.lib.JacksonV2.DataFormat.forceArtifacts(project, this@all, this@resolutionStrategy)
-                io.spine.dependency.lib.JacksonV2.Module.forceArtifacts(project, this@all, this@resolutionStrategy)
+                io.spine.dependency.lib.JacksonV2.Core.forceArtifacts(project, cfg, rs)
+                io.spine.dependency.lib.JacksonV2.DataType.forceArtifacts(project, cfg, rs)
+                io.spine.dependency.lib.JacksonV2.DataFormat.forceArtifacts(project, cfg, rs)
+                io.spine.dependency.lib.JacksonV2.Module.forceArtifacts(project, cfg, rs)
                 // Jackson 2.x artifacts that only the IntelliJ Platform brings.
-                io.spine.dependency.lib.JacksonV2.Junior.forceArtifacts(project, this@all, this@resolutionStrategy)
+                io.spine.dependency.lib.JacksonV2.Junior.forceArtifacts(project, cfg, rs)
                 force(
                     // Policy: force the Kotlin runtime at the toolchain
                     // version over the Gradle-embedded one — refresh-era
@@ -92,8 +94,8 @@ buildscript {
                     io.spine.dependency.lib.Grpc.bom,
                     // `aedile-core` requests the 3.0.4 line.
                     io.spine.dependency.lib.Caffeine.lib,
-                    "org.jetbrains.kotlin:kotlin-stdlib:${io.spine.dependency.lib.Kotlin.runtimeVersion}",
-                    "org.jetbrains.kotlin:kotlin-reflect:${io.spine.dependency.lib.Kotlin.runtimeVersion}",
+                    "org.jetbrains.kotlin:kotlin-stdlib:$kotlinRuntime",
+                    "org.jetbrains.kotlin:kotlin-reflect:$kotlinRuntime",
                     // Only the BOM carries a version; the members are
                     // BOM-managed and cannot be forced by coordinate.
                     coroutines.bom,
@@ -192,7 +194,7 @@ allprojects {
                     // gRPC members arrive version-less through the Spine
                     // artifacts; this classpath honours rules, not platforms.
                     if (requested.group == "io.grpc"
-                        && !requested.name.startsWith("grpc-kotlin")) {
+                        && !requested.name.contains("grpc-kotlin")) {
                         useVersion(io.spine.dependency.lib.Grpc.version)
                     }
                 }
@@ -204,7 +206,6 @@ allprojects {
                     // Floor artifacts request the pre-refresh versions;
                     // the Protobuf runtime must never be older than the
                     // refreshed gencode.
-                    io.spine.dependency.kotlinx.Coroutines.bom,
                     io.spine.dependency.kotlinx.AtomicFu.lib,
                     io.spine.dependency.lib.Protobuf.javaLib,
                     io.spine.dependency.lib.Caffeine.lib,

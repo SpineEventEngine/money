@@ -19,13 +19,6 @@
  */
 
 /**
- * Declares the version of the artifacts to publish and versions of
- * project-specific general dependencies.
- *
- * This file is used in both module `build.gradle` scripts and in the integration tests,
- * as we want to manage the versions in a single source.
+ *  The version of this library.
  */
-
-val moneyVersion = "2.0.0-SNAPSHOT.11"
-
-extra.set("versionToPublish", moneyVersion)
+extra.set("versionToPublish", "2.0.0-SNAPSHOT.11")
