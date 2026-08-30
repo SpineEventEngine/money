@@ -98,11 +98,6 @@ spinePublishing {
             cloudArtifactRegistry
         )
     }
-
-    dokkaJar {
-        kotlin = true
-        java = true
-    }
 }
 
 allprojects {
