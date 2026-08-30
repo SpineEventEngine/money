@@ -47,6 +47,11 @@ buildscript {
     standardSpineSdkRepositories()
     doForceVersions(configurations)
 
+    dependencies {
+        classpath(io.spine.dependency.local.Compiler.pluginLib)
+        classpath(io.spine.dependency.local.CoreJvmCompiler.gradlePlugin)
+    }
+
     configurations {
         all {
             resolutionStrategy {
