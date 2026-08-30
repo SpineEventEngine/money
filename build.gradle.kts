@@ -182,6 +182,13 @@ allprojects {
                         )) {
                         useVersion(io.spine.dependency.local.Base.version)
                     }
+                    // Policy: the Kotlin runtime is aligned at the
+                    // toolchain version everywhere.
+                    if (requested.group == "org.jetbrains.kotlin"
+                        && (requested.name.startsWith("kotlin-stdlib")
+                            || requested.name == "kotlin-reflect")) {
+                        useVersion(io.spine.dependency.lib.Kotlin.runtimeVersion)
+                    }
                     // gRPC members arrive version-less through the Spine
                     // artifacts; this classpath honours rules, not platforms.
                     if (requested.group == "io.grpc"
