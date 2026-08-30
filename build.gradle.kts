@@ -164,6 +164,10 @@ allprojects {
                     Logging.lib,
                     Logging.middleware,
                     Compiler.api,
+                    // The wave's fresh Time meets the floor requested by
+                    // still-published artifacts.
+                    io.spine.dependency.local.Time.lib,
+                    io.spine.dependency.local.Time.javaExtensions,
                     Validation.runtime,
                     Dokka.BasePlugin.lib,
                     // The Jackson 3 object's members are BOM-managed and
