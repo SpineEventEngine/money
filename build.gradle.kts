@@ -48,6 +48,10 @@ buildscript {
     doForceVersions(configurations)
 
     dependencies {
+        // The transitive Spine artifacts declare BOM-managed gRPC members
+        // without versions; the platform must be on the classpath for them
+        // to resolve.
+        classpath(enforcedPlatform(io.spine.dependency.lib.Grpc.bom))
         classpath(io.spine.dependency.local.Compiler.pluginLib)
         classpath(io.spine.dependency.local.CoreJvmCompiler.gradlePlugin)
     }
