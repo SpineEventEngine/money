@@ -31,6 +31,9 @@ import io.spine.gradle.report.license.LicenseReporter
 plugins {
     protobuf
     `java-library`
+    // Publishing builds a Javadoc JAR for every published module, which
+    // requires the Dokka setup the other modules get from their convention.
+    id("dokka-setup")
 }
 LicenseReporter.generateReportIn(project)
 
