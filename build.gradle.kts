@@ -73,6 +73,18 @@ buildscript {
                         )) {
                         useVersion(io.spine.dependency.local.Base.version)
                     }
+                    // The published CoreJvm Compiler floor was built against
+                    // the previous Compiler, so it requests that generation
+                    // while this classpath pins the refreshed one.
+                    if (requested.group == "io.spine.tools"
+                        && requested.name.startsWith("compiler-")) {
+                        useVersion(io.spine.dependency.local.Compiler.version)
+                    }
+                    // The same floor requests the previous patch of Jackson
+                    // 3.x; the 2.x family is aligned in `allprojects`.
+                    if (requested.group.startsWith("tools.jackson")) {
+                        useVersion(jackson.version)
+                    }
                 }
                 val cfg = this@all
                 val rs = this@resolutionStrategy
@@ -171,6 +183,11 @@ allprojects {
                     if (requested.group.startsWith("com.fasterxml.jackson")
                         && requested.name != "jackson-annotations") {
                         useVersion(io.spine.dependency.lib.JacksonV2.version)
+                    }
+                    // Jackson 3.x needs the same alignment: the published
+                    // CoreJvm Compiler floor requests the previous patch.
+                    if (requested.group.startsWith("tools.jackson")) {
+                        useVersion(io.spine.dependency.lib.Jackson.version)
                     }
                     // The plugin-managed `spineCompiler` classpath does not
                     // honour `force`, so the Base family is aligned by rule
