@@ -62,21 +62,7 @@ buildscript {
                 val coroutines = io.spine.dependency.kotlinx.Coroutines
                 val validation = io.spine.dependency.local.Validation
                 val jackson = io.spine.dependency.lib.Jackson
-                // Align the Spine base family with the published floor: the
-                // locally built Compiler pulls `.442` transitives that exist
-                // only in Maven Local, which this classpath cannot use.
                 eachDependency {
-                    if (requested.group == "io.spine"
-                        && requested.name in setOf(
-                            "spine-base", "spine-annotations",
-                            "spine-environment", "spine-format"
-                        )) {
-                        useVersion(io.spine.dependency.local.Base.version)
-                        because(
-                            "The locally built Compiler pulls Base transitives" +
-                                " that only Maven Local serves."
-                        )
-                    }
                     // The published CoreJvm Compiler floor was built against
                     // the previous Compiler, so it requests that generation
                     // while this classpath pins the refreshed one.
@@ -124,7 +110,14 @@ buildscript {
                     // pinned through the BOM that `BomsPlugin` applies.
                     coroutines.bom,
 
+                    // Pin the Spine Base family at the published floor:
+                    // transitives of the plugins on this classpath request
+                    // several generations (`.425`, `.426`, `.441`, `.442`),
+                    // and `failOnVersionConflict()` fails on any disagreement.
                     io.spine.dependency.local.Base.lib,
+                    io.spine.dependency.local.Base.annotations,
+                    io.spine.dependency.local.Base.environment,
+                    io.spine.dependency.local.Base.format,
                     io.spine.dependency.local.ToolBase.pluginBase,
                     io.spine.dependency.local.Logging.lib,
 
@@ -139,7 +132,6 @@ buildscript {
                     io.spine.dependency.lib.JacksonV2.bom,
                     io.spine.dependency.local.Time.lib,
                     io.spine.dependency.local.Time.javaExtensions,
-                    io.spine.dependency.local.Base.environment,
                 )
             }
         }
