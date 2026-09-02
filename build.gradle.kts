@@ -120,12 +120,11 @@ buildscript {
                     io.spine.dependency.lib.Caffeine.lib,
                     "org.jetbrains.kotlin:kotlin-stdlib:$kotlinRuntime",
                     "org.jetbrains.kotlin:kotlin-reflect:$kotlinRuntime",
-                    // Only the BOM carries a version; the members are
-                    // BOM-managed and cannot be forced by coordinate.
+                    // The members carry no version of their own; they are
+                    // pinned through the BOM that `BomsPlugin` applies.
                     coroutines.bom,
 
                     io.spine.dependency.local.Base.lib,
-                    io.spine.dependency.local.ToolBase.lib,
                     io.spine.dependency.local.ToolBase.pluginBase,
                     io.spine.dependency.local.Logging.lib,
 
