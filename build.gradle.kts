@@ -72,6 +72,10 @@ buildscript {
                             "spine-environment", "spine-format"
                         )) {
                         useVersion(io.spine.dependency.local.Base.version)
+                        because(
+                            "The locally built Compiler pulls Base transitives" +
+                                " that only Maven Local serves."
+                        )
                     }
                     // The published CoreJvm Compiler floor was built against
                     // the previous Compiler, so it requests that generation
@@ -79,11 +83,19 @@ buildscript {
                     if (requested.group == "io.spine.tools"
                         && requested.name.startsWith("compiler-")) {
                         useVersion(io.spine.dependency.local.Compiler.version)
+                        because(
+                            "The published CoreJvm Compiler floor requests the" +
+                                " previous Compiler generation."
+                        )
                     }
                     // The same floor requests the previous patch of Jackson
                     // 3.x; the 2.x family is aligned in `allprojects`.
                     if (requested.group.startsWith("tools.jackson")) {
                         useVersion(jackson.version)
+                        because(
+                            "The published CoreJvm Compiler floor requests the" +
+                                " previous Jackson patch."
+                        )
                     }
                 }
                 val cfg = this@all
@@ -183,11 +195,19 @@ allprojects {
                     if (requested.group.startsWith("com.fasterxml.jackson")
                         && requested.name != "jackson-annotations") {
                         useVersion(io.spine.dependency.lib.JacksonV2.version)
+                        because(
+                            "Refresh-era plugins bring Jackson 2.x at more" +
+                                " than one patch level."
+                        )
                     }
                     // Jackson 3.x needs the same alignment: the published
                     // CoreJvm Compiler floor requests the previous patch.
                     if (requested.group.startsWith("tools.jackson")) {
                         useVersion(io.spine.dependency.lib.Jackson.version)
+                        because(
+                            "The published CoreJvm Compiler floor requests the" +
+                                " previous Jackson patch."
+                        )
                     }
                     // The plugin-managed `spineCompiler` classpath does not
                     // honour `force`, so the Base family is aligned by rule
