@@ -28,7 +28,10 @@
 
 import io.spine.dependency.build.Dokka
 import io.spine.dependency.kotlinx.Coroutines
+import io.spine.dependency.lib.Grpc
 import io.spine.dependency.lib.Jackson
+import io.spine.dependency.lib.JacksonV2
+import io.spine.dependency.lib.Kotlin
 import io.spine.dependency.lib.KotlinPoet
 import io.spine.dependency.local.Base
 import io.spine.dependency.local.Compiler
@@ -62,28 +65,6 @@ buildscript {
                 val coroutines = io.spine.dependency.kotlinx.Coroutines
                 val validation = io.spine.dependency.local.Validation
                 val jackson = io.spine.dependency.lib.Jackson
-                eachDependency {
-                    // The published CoreJvm Compiler floor was built against
-                    // the previous Compiler, so it requests that generation
-                    // while this classpath pins the refreshed one.
-                    if (requested.group == "io.spine.tools"
-                        && requested.name.startsWith("compiler-")) {
-                        useVersion(io.spine.dependency.local.Compiler.version)
-                        because(
-                            "The published CoreJvm Compiler floor requests the" +
-                                " previous Compiler generation."
-                        )
-                    }
-                    // The same floor requests the previous patch of Jackson
-                    // 3.x; the 2.x family is aligned in `allprojects`.
-                    if (requested.group.startsWith("tools.jackson")) {
-                        useVersion(jackson.version)
-                        because(
-                            "The published CoreJvm Compiler floor requests the" +
-                                " previous Jackson patch."
-                        )
-                    }
-                }
                 val cfg = this@all
                 val rs = this@resolutionStrategy
                 val kotlinRuntime = io.spine.dependency.lib.Kotlin.runtimeVersion
@@ -95,6 +76,15 @@ buildscript {
                 io.spine.dependency.lib.JacksonV2.Module.forceArtifacts(project, cfg, rs)
                 // Jackson 2.x artifacts that only the IntelliJ Platform brings.
                 io.spine.dependency.lib.JacksonV2.Junior.forceArtifacts(project, cfg, rs)
+                // The published CoreJvm Compiler floor was built against the
+                // previous Compiler, so it requests that generation while this
+                // classpath pins the refreshed one.
+                io.spine.dependency.local.Compiler.forceArtifacts(project, cfg, rs)
+                // The same floor requests the previous patch of Jackson 3.x;
+                // the 2.x family is aligned in `allprojects`.
+                jackson.forceArtifacts(project, cfg, rs)
+                io.spine.dependency.lib.Jackson.DataFormat.forceArtifacts(project, cfg, rs)
+                io.spine.dependency.lib.Jackson.DataType.forceArtifacts(project, cfg, rs)
                 force(
                     // Policy: force the Kotlin runtime at the toolchain
                     // version over the Gradle-embedded one — refresh-era
@@ -118,6 +108,9 @@ buildscript {
                     io.spine.dependency.local.Base.annotations,
                     io.spine.dependency.local.Base.environment,
                     io.spine.dependency.local.Base.format,
+                    // `compiler-gradle-plugin` is not among `Compiler`'s
+                    // declared modules, but the floor requests it.
+                    io.spine.dependency.local.Compiler.pluginLib,
                     io.spine.dependency.local.ToolBase.pluginBase,
                     io.spine.dependency.local.Logging.lib,
 
@@ -176,56 +169,30 @@ allprojects {
         all {
             exclude("io.spine:spine-validate")
             resolutionStrategy {
+                val cfg = this@all
+                val rs = this@resolutionStrategy
                 // The refresh-era plugins and their transitive dependencies
                 // bring many Jackson 2.x artifacts at more than one patch
-                // level; align the whole family in one rule rather than
-                // enumerating coordinates.
-                eachDependency {
-                    // `jackson-annotations` keeps its own version line, so it
-                    // is left to the value the dependency object declares.
-                    if (requested.group.startsWith("com.fasterxml.jackson")
-                        && requested.name != "jackson-annotations") {
-                        useVersion(io.spine.dependency.lib.JacksonV2.version)
-                        because(
-                            "Refresh-era plugins bring Jackson 2.x at more" +
-                                " than one patch level."
-                        )
-                    }
-                    // Jackson 3.x needs the same alignment: the published
-                    // CoreJvm Compiler floor requests the previous patch.
-                    if (requested.group.startsWith("tools.jackson")) {
-                        useVersion(io.spine.dependency.lib.Jackson.version)
-                        because(
-                            "The published CoreJvm Compiler floor requests the" +
-                                " previous Jackson patch."
-                        )
-                    }
-                    // The plugin-managed `spineCompiler` classpath does not
-                    // honour `force`, so the Base family is aligned by rule
-                    // as well: the wave's fresh Base meets the floor that
-                    // still-published artifacts request.
-                    if (requested.group == "io.spine"
-                        && requested.name in setOf(
-                            "spine-base", "spine-annotations",
-                            "spine-environment", "spine-format"
-                        )) {
-                        useVersion(io.spine.dependency.local.Base.version)
-                    }
-                    // Policy: the Kotlin runtime is aligned at the
-                    // toolchain version everywhere.
-                    if (requested.group == "org.jetbrains.kotlin"
-                        && (requested.name.startsWith("kotlin-stdlib")
-                            || requested.name == "kotlin-reflect"
-                            || requested.name == "kotlin-bom")) {
-                        useVersion(io.spine.dependency.lib.Kotlin.runtimeVersion)
-                    }
-                    // gRPC members arrive version-less through the Spine
-                    // artifacts; this classpath honours rules, not platforms.
-                    if (requested.group == "io.grpc"
-                        && !requested.name.contains("grpc-kotlin")) {
-                        useVersion(io.spine.dependency.lib.Grpc.version)
-                    }
-                }
+                // level. `jackson-annotations` keeps its own version line and
+                // belongs to none of these objects, so it stays untouched.
+                JacksonV2.Core.forceArtifacts(project, cfg, rs)
+                JacksonV2.DataType.forceArtifacts(project, cfg, rs)
+                JacksonV2.DataFormat.forceArtifacts(project, cfg, rs)
+                JacksonV2.Module.forceArtifacts(project, cfg, rs)
+                JacksonV2.Junior.forceArtifacts(project, cfg, rs)
+                // Jackson 3.x needs the same alignment: the published
+                // CoreJvm Compiler floor requests the previous patch.
+                Jackson.forceArtifacts(project, cfg, rs)
+                Jackson.DataFormat.forceArtifacts(project, cfg, rs)
+                Jackson.DataType.forceArtifacts(project, cfg, rs)
+                // Policy: the Kotlin runtime is aligned at the toolchain
+                // version everywhere.
+                Kotlin.StdLib.forceArtifacts(project, cfg, rs)
+                Kotlin.forceArtifacts(project, cfg, rs)
+                // gRPC members arrive version-less through the Spine
+                // artifacts. `grpc-kotlin` has its own object and version
+                // line, and is not a member here.
+                Grpc.forceArtifacts(project, cfg, rs)
                 force(
                     KotlinPoet.lib,
 
@@ -238,6 +205,9 @@ allprojects {
                     io.spine.dependency.lib.Protobuf.javaLib,
                     io.spine.dependency.lib.Caffeine.lib,
                     Base.lib,
+                    Base.annotations,
+                    Base.environment,
+                    Base.format,
                     Logging.lib,
                     Logging.middleware,
                     Compiler.api,
@@ -250,6 +220,9 @@ allprojects {
                     // The Jackson 3 object's members are BOM-managed and
                     // carry no version, so the BOM is what can be forced.
                     Jackson.bom,
+                    JacksonV2.bom,
+                    Kotlin.bom,
+                    Grpc.bom,
                     JUnit.bom,
                 )
             }
