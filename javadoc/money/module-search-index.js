@@ -1,0 +1,1 @@
+var moduleSearchIndex = [{"l":"money","url":"index.html"}]
