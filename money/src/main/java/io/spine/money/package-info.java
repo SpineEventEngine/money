@@ -22,12 +22,10 @@
  * This package provides data types and utilities for working with monetary values.
  */
 
-@Experimental
 @CheckReturnValue
-@ParametersAreNonnullByDefault
+@NullMarked
 package io.spine.money;
 
 import com.google.errorprone.annotations.CheckReturnValue;
-import io.spine.annotation.Experimental;
 
-import javax.annotation.ParametersAreNonnullByDefault;
+import org.jspecify.annotations.NullMarked;

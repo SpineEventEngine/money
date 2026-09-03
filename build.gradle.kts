@@ -27,54 +27,104 @@
 @file:Suppress("RemoveRedundantQualifierName")
 
 import io.spine.dependency.build.Dokka
-import io.spine.dependency.lib.Coroutines
+import io.spine.dependency.kotlinx.Coroutines
+import io.spine.dependency.lib.Grpc
 import io.spine.dependency.lib.Jackson
+import io.spine.dependency.lib.JacksonV2
+import io.spine.dependency.lib.Kotlin
 import io.spine.dependency.lib.KotlinPoet
 import io.spine.dependency.local.Base
+import io.spine.dependency.local.Compiler
 import io.spine.dependency.local.Logging
-import io.spine.dependency.local.ProtoData
-import io.spine.dependency.local.ToolBase
 import io.spine.dependency.local.Validation
 import io.spine.dependency.test.JUnit
 import io.spine.gradle.publish.PublishingRepos
 import io.spine.gradle.publish.spinePublishing
-import io.spine.gradle.report.coverage.JacocoConfig
+import io.spine.gradle.repo.standardToSpineSdk
+import io.spine.gradle.report.coverage.KoverConfig
 import io.spine.gradle.report.license.LicenseReporter
 import io.spine.gradle.report.pom.PomGenerator
-import io.spine.gradle.standardToSpineSdk
 
 buildscript {
     standardSpineSdkRepositories()
     doForceVersions(configurations)
 
     dependencies {
-        classpath(io.spine.dependency.local.McJava.pluginLib)
-        // TODO: Define McJs dependency object.
-        classpath("io.spine.tools:spine-mc-js:2.0.0-SNAPSHOT.130")
+        // The transitive Spine artifacts declare BOM-managed gRPC members
+        // without versions; the platform must be on the classpath for them
+        // to resolve.
+        classpath(enforcedPlatform(io.spine.dependency.kotlinx.Coroutines.bom))
+        classpath(enforcedPlatform(io.spine.dependency.lib.Grpc.bom))
+        classpath(io.spine.dependency.local.Compiler.pluginLib)
+        classpath(io.spine.dependency.local.CoreJvmCompiler.gradlePlugin)
     }
 
     configurations {
         all {
             resolutionStrategy {
-                val coroutines = io.spine.dependency.lib.Coroutines
+                val coroutines = io.spine.dependency.kotlinx.Coroutines
                 val validation = io.spine.dependency.local.Validation
                 val jackson = io.spine.dependency.lib.Jackson
+                val cfg = this@all
+                val rs = this@resolutionStrategy
+                val kotlinRuntime = io.spine.dependency.lib.Kotlin.runtimeVersion
+                // The 2.x submodules need their own alignment: the BOM alone
+                // does not settle versions the refresh-era plugins request.
+                io.spine.dependency.lib.JacksonV2.Core.forceArtifacts(project, cfg, rs)
+                io.spine.dependency.lib.JacksonV2.DataType.forceArtifacts(project, cfg, rs)
+                io.spine.dependency.lib.JacksonV2.DataFormat.forceArtifacts(project, cfg, rs)
+                io.spine.dependency.lib.JacksonV2.Module.forceArtifacts(project, cfg, rs)
+                // Jackson 2.x artifacts that only the IntelliJ Platform brings.
+                io.spine.dependency.lib.JacksonV2.Junior.forceArtifacts(project, cfg, rs)
+                // The published CoreJvm Compiler floor was built against the
+                // previous Compiler, so it requests that generation while this
+                // classpath pins the refreshed one.
+                io.spine.dependency.local.Compiler.forceArtifacts(project, cfg, rs)
+                // The same floor requests the previous patch of Jackson 3.x;
+                // the 2.x family is aligned in `allprojects`.
+                jackson.forceArtifacts(project, cfg, rs)
+                io.spine.dependency.lib.Jackson.DataFormat.forceArtifacts(project, cfg, rs)
+                io.spine.dependency.lib.Jackson.DataType.forceArtifacts(project, cfg, rs)
                 force(
+                    // Policy: force the Kotlin runtime at the toolchain
+                    // version over the Gradle-embedded one — refresh-era
+                    // plugin jars require it.
+                    io.spine.dependency.lib.Kotlin.bom,
+                    // gRPC members are BOM-managed too.
+                    io.spine.dependency.lib.Grpc.bom,
+                    // `aedile-core` requests the 3.0.4 line.
+                    io.spine.dependency.lib.Caffeine.lib,
+                    "org.jetbrains.kotlin:kotlin-stdlib:$kotlinRuntime",
+                    "org.jetbrains.kotlin:kotlin-reflect:$kotlinRuntime",
+                    // The members carry no version of their own; they are
+                    // pinned through the BOM that `BomsPlugin` applies.
                     coroutines.bom,
-                    coroutines.core,
-                    coroutines.coreJvm,
-                    coroutines.jdk8,
 
+                    // Pin the Spine Base family at the published floor:
+                    // transitives of the plugins on this classpath request
+                    // several generations (`.425`, `.426`, `.441`, `.442`),
+                    // and `failOnVersionConflict()` fails on any disagreement.
                     io.spine.dependency.local.Base.lib,
-                    io.spine.dependency.local.ToolBase.lib,
+                    io.spine.dependency.local.Base.annotations,
+                    io.spine.dependency.local.Base.environment,
+                    io.spine.dependency.local.Base.format,
+                    // `compiler-gradle-plugin` is not among `Compiler`'s
+                    // declared modules, but the floor requests it.
+                    io.spine.dependency.local.Compiler.pluginLib,
                     io.spine.dependency.local.ToolBase.pluginBase,
                     io.spine.dependency.local.Logging.lib,
 
                     validation.runtime,
                     jackson.annotations,
+                    // The other Jackson 3 members are BOM-managed and carry
+                    // no version of their own, so the BOM is what is forced.
                     jackson.bom,
-                    jackson.databind,
-                    jackson.moduleKotlin
+                    // The refresh-era plugins bring the 2.x line as well, and
+                    // the wave's fresh Time meets the floor requested by
+                    // still-published artifacts.
+                    io.spine.dependency.lib.JacksonV2.bom,
+                    io.spine.dependency.local.Time.lib,
+                    io.spine.dependency.local.Time.javaExtensions,
                 )
             }
         }
@@ -82,32 +132,28 @@ buildscript {
 }
 
 repositories {
-    // Required to grab the dependencies for `JacocoConfig`.
+    // Required to grab the dependencies for `KoverConfig`.
     standardToSpineSdk()
 }
 
 plugins {
+    // Gives the aggregator root the lifecycle tasks (`build`, `check`, ...)
+    // that the shared reporting helpers expect to find.
+    base
     idea
-    jacoco
     `gradle-doctor`
     `project-report`
 }
 
 spinePublishing {
     modules = setOf(
-        "money",
-        "money-js"
+        "money"
     )
     destinations = with(PublishingRepos) {
         setOf(
             gitHub("money"),
             cloudArtifactRegistry
         )
-    }
-
-    dokkaJar {
-        kotlin = true
-        java = true
     }
 }
 
@@ -123,34 +169,72 @@ allprojects {
         all {
             exclude("io.spine:spine-validate")
             resolutionStrategy {
+                val cfg = this@all
+                val rs = this@resolutionStrategy
+                // The refresh-era plugins and their transitive dependencies
+                // bring many Jackson 2.x artifacts at more than one patch
+                // level. `jackson-annotations` keeps its own version line and
+                // belongs to none of these objects, so it stays untouched.
+                JacksonV2.Core.forceArtifacts(project, cfg, rs)
+                JacksonV2.DataType.forceArtifacts(project, cfg, rs)
+                JacksonV2.DataFormat.forceArtifacts(project, cfg, rs)
+                JacksonV2.Module.forceArtifacts(project, cfg, rs)
+                JacksonV2.Junior.forceArtifacts(project, cfg, rs)
+                // Jackson 3.x needs the same alignment: the published
+                // CoreJvm Compiler floor requests the previous patch.
+                Jackson.forceArtifacts(project, cfg, rs)
+                Jackson.DataFormat.forceArtifacts(project, cfg, rs)
+                Jackson.DataType.forceArtifacts(project, cfg, rs)
+                // Policy: the Kotlin runtime is aligned at the toolchain
+                // version everywhere.
+                Kotlin.StdLib.forceArtifacts(project, cfg, rs)
+                Kotlin.forceArtifacts(project, cfg, rs)
+                // gRPC members arrive version-less through the Spine
+                // artifacts. `grpc-kotlin` has its own object and version
+                // line, and is not a member here.
+                Grpc.forceArtifacts(project, cfg, rs)
                 force(
                     KotlinPoet.lib,
 
                     Coroutines.bom,
-                    Coroutines.core,
-                    Coroutines.coreJvm,
-                    Coroutines.debug,
-                    Coroutines.test,
-                    Coroutines.testJvm,
-                    Coroutines.jdk8,
 
+                    // Floor artifacts request the pre-refresh versions;
+                    // the Protobuf runtime must never be older than the
+                    // refreshed gencode.
+                    io.spine.dependency.kotlinx.AtomicFu.lib,
+                    io.spine.dependency.lib.Protobuf.javaLib,
+                    io.spine.dependency.lib.Caffeine.lib,
                     Base.lib,
-                    ToolBase.lib,
+                    Base.annotations,
+                    Base.environment,
+                    Base.format,
                     Logging.lib,
                     Logging.middleware,
-                    ProtoData.api,
+                    Compiler.api,
+                    // The wave's fresh Time meets the floor requested by
+                    // still-published artifacts.
+                    io.spine.dependency.local.Time.lib,
+                    io.spine.dependency.local.Time.javaExtensions,
                     Validation.runtime,
                     Dokka.BasePlugin.lib,
-                    Jackson.databind,
-                    JUnit.runner,
+                    // The Jackson 3 object's members are BOM-managed and
+                    // carry no version, so the BOM is what can be forced.
+                    Jackson.bom,
+                    JacksonV2.bom,
+                    Kotlin.bom,
+                    Grpc.bom,
+                    JUnit.bom,
                 )
             }
         }
     }
 }
 
+// Kover must be applied while the project is still configurable, so it is
+// invoked here rather than from `gradle.projectsEvaluated`.
+KoverConfig.applyTo(project)
+
 gradle.projectsEvaluated {
-    JacocoConfig.applyTo(project)
     LicenseReporter.mergeAllReports(project)
     PomGenerator.applyTo(project)
 }

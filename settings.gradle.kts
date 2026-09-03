@@ -21,4 +21,3 @@
 rootProject.name = "spine-money"
 
 include("money")
-include("money-js")

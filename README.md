@@ -14,7 +14,7 @@ This library has experimental status, which means its API is likely to change in
 
 ## Supported Languages
 
-Currently, the library supports only Java, with JavaScript and Dart being on the priority list.
+The library supports Java.
 
 ## Adding to a Gradle Project
 
