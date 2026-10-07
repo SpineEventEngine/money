@@ -100,6 +100,9 @@ buildscript {
                     // declared modules, but the floor requests it.
                     io.spine.dependency.local.Compiler.pluginLib,
                     io.spine.dependency.local.ToolBase.pluginBase,
+                    io.spine.dependency.local.ToolBase.code,
+                    io.spine.dependency.local.ToolBase.fs,
+                    io.spine.dependency.local.ToolBase.jvmTools,
                     io.spine.dependency.local.Logging.lib,
 
                     validation.runtime,
