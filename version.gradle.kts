@@ -21,4 +21,4 @@
 /**
  *  The version of this library.
  */
-extra.set("versionToPublish", "2.0.0-SNAPSHOT.11")
+extra.set("versionToPublish", "2.0.0-SNAPSHOT.12")
