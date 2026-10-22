@@ -30,13 +30,13 @@ option (experimental_all) = true;
 // For the original code see:
 //   https://raw.githubusercontent.com/googleapis/googleapis/master/google/type/money.proto
 // But in our type we use the `Currency` message instead of a string currency code
-// to have the code validated and to provide Java API for currencies.
+// to have the code validated and to provide a Java API for currencies.
 //
 
 // An amount of money in its currency type.
 message Money {
 
-    // Was the `Currency` enum before version 2.0.0.
+    // Field 1 held the `Currency` enum before version 2.0.0.
     reserved 1;
 
     // The currency of the amount of money.
@@ -63,7 +63,7 @@ message Money {
 // Other currencies, such as cryptocurrencies or loyalty points, use codes defined
 // by the application.
 //
-// Information about a currency, such as its name or the number of minor units,
+// Information about a currency, such as its name or the number of fraction digits,
 // is not a part of this type. Please see `CurrencyInfo` for details.
 //
 message Currency {
@@ -102,7 +102,7 @@ message CurrencyInfo {
     // The number of digits after the decimal separator.
     //
     // The value is less than zero if there are no minor units for this currency (e.g., for gold).
-    // See ISO 4217 "minor unit" definition for details.
+    // See the ISO 4217 definition of "minor unit" for details.
     //
     int32 fraction_digits = 5;
 }

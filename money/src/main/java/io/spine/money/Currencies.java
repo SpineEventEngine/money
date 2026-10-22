@@ -14,7 +14,8 @@
 
 package io.spine.money;
 
-import java.util.Locale;
+import com.google.common.base.Ascii;
+
 import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -53,8 +54,8 @@ public final class Currencies {
     /**
      * Creates a currency with the given code.
      *
-     * <p>The code is converted to upper case, so {@code "usd"} and {@code "USD"} produce
-     * the same currency.
+     * <p>ASCII letters of the code are converted to upper case, so {@code "usd"} and
+     * {@code "USD"} produce the same currency. Other characters are left as they are.
      *
      * <p>The method does not check that a {@link CurrencyProvider} knows the currency.
      * Use {@link #find(Currency)} for that.
@@ -66,7 +67,7 @@ public final class Currencies {
      */
     public static Currency of(String code) {
         checkNotNull(code);
-        var upperCase = code.toUpperCase(Locale.ROOT);
+        var upperCase = Ascii.toUpperCase(code);
         checkValidCode(upperCase);
         return Currency.newBuilder()
                 .setCode(upperCase)
@@ -76,7 +77,7 @@ public final class Currencies {
     /**
      * Finds information about the given currency.
      *
-     * @return information about the currency, or empty {@code Optional} if
+     * @return information about the currency, or an empty {@code Optional} if
      *         no {@link CurrencyProvider} knows the currency
      * @throws IllegalArgumentException
      *         if the code of the currency is invalid, which may happen if the currency

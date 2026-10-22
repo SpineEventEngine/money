@@ -14,8 +14,7 @@ built-in `JdkCurrencyProvider`, backed by `java.util.Currency`, covers ISO 4217.
 `CurrencyMixin` adds `info()` and `fractionDigits()` to `Currency`.
 `MoneyAmount` is a validated wrapper around a `Money` value; its factories check
 the value through the package-private `MoneyPreconditions`. The library is
-experimental, so its API is likely to change. It is published as
-`io.spine:spine-money`.
+experimental, so its API is likely to change. It is published as `io.spine:spine-money`.
 
 ## Architecture
 

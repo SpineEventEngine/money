@@ -51,6 +51,9 @@ final class MoneyPreconditions {
         return true;
     }
 
+    /**
+     * Tells whether the given string is a valid currency code.
+     */
     static boolean isValidCode(String currencyCode) {
         return CURRENCY_CODE.matcher(currencyCode).matches();
     }
@@ -66,6 +69,12 @@ final class MoneyPreconditions {
         return validCurrency && validNanos && validUnits;
     }
 
+    /**
+     * Ensures that the given string is a valid currency code.
+     *
+     * @throws IllegalArgumentException
+     *         if the string is not a valid currency code
+     */
     static void checkValidCode(String currencyCode) {
         checkArgument(isValidCode(currencyCode),
                       "A currency code must consist of 2 to 12 uppercase ASCII letters or digits." +

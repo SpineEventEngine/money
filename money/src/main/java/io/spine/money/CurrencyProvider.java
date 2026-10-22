@@ -14,6 +14,8 @@
 
 package io.spine.money;
 
+import io.spine.annotation.SPI;
+
 import java.util.Optional;
 
 /**
@@ -24,18 +26,21 @@ import java.util.Optional;
  * or annotate it with {@code @AutoService(CurrencyProvider.class)}.
  *
  * <p>When looking up a currency, the library asks the providers in the order
- * the {@code ServiceLoader} returns them, and uses the first answer it gets.
+ * the {@code ServiceLoader} returns them, and uses the first non-empty answer.
  * The built-in provider of ISO 4217 currencies is asked last. So, an application may both
  * add currencies and replace the information about ISO 4217 currencies.
  */
+@SPI
 public interface CurrencyProvider {
 
     /**
      * Finds information about the currency with the given code.
      *
+     * <p>The returned information must be about the currency with the given code.
+     *
      * @param code
      *         the code of the currency, which is a valid value of {@link Currency#getCode()}
-     * @return information about the currency, or empty {@code Optional} if
+     * @return information about the currency, or an empty {@code Optional} if
      *         this provider does not know the currency
      */
     Optional<CurrencyInfo> find(String code);

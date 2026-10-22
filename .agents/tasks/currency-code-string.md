@@ -72,3 +72,7 @@ being stored in the schema.
 - 2026-10-22 21:25 — `clean build dokkaGenerate` passed with the refreshed
   `config`: 52 tests, Kover, PMD, and Dokka green. Awaiting review; nothing
   committed.
+- 2026-10-22 21:40 — opened PR #34. Applied the pre-PR review findings:
+  `Currencies.of` now upper-cases ASCII letters only (`ß` and `ı` were turning
+  into valid codes); the new tests are Kotlin `Spec` suites with Kotest
+  assertions; `CurrencyProvider` is `@SPI`; Javadoc and wording fixes.

@@ -45,6 +45,8 @@ interface CurrencyMixin extends CurrencyOrBuilder {
      *
      * @throws UnknownCurrencyException
      *         if no {@link CurrencyProvider} knows this currency
+     * @throws IllegalArgumentException
+     *         if the code of this currency is invalid
      */
     default int fractionDigits() {
         return info().getFractionDigits();

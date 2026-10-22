@@ -28,7 +28,7 @@ import static java.util.function.Function.identity;
  *
  * <p>The information comes from {@link java.util.Currency}, which the JDK keeps up to date
  * with amendments to ISO 4217. Besides current currencies, the JDK knows some
- * historic ones (e.g., {@code DEM}).
+ * historical ones (e.g., {@code DEM}).
  */
 final class JdkCurrencyProvider implements CurrencyProvider {
 
