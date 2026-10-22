@@ -96,6 +96,7 @@ buildscript {
                     io.spine.dependency.local.Base.annotations,
                     io.spine.dependency.local.Base.environment,
                     io.spine.dependency.local.Base.format,
+                    io.spine.dependency.local.Reflect.lib,
                     // `compiler-gradle-plugin` is not among `Compiler`'s
                     // declared modules, but the floor requests it.
                     io.spine.dependency.local.Compiler.pluginLib,
