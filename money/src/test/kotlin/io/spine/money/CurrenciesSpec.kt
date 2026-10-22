@@ -22,13 +22,12 @@ import io.spine.money.given.TestCurrencyProvider.Companion.BITCOIN_FRACTION_DIGI
 import io.spine.money.given.TestCurrencyProvider.Companion.MISMATCHED
 import io.spine.money.given.TestCurrencyProvider.Companion.TESTING
 import io.spine.money.given.TestCurrencyProvider.Companion.TESTING_FRACTION_DIGITS
-import io.spine.testing.UtilityClassTest
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 @DisplayName("`Currencies` should")
-internal class CurrenciesSpec : UtilityClassTest<Currencies>(Currencies::class.java) {
+internal class CurrenciesSpec {
 
     @Nested inner class
     `create a currency` {

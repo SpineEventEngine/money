@@ -14,6 +14,7 @@
 
 package io.spine.money.given
 
+import com.google.auto.service.AutoService
 import io.spine.money.Currencies
 import io.spine.money.CurrencyInfo
 import io.spine.money.CurrencyProvider
@@ -22,10 +23,8 @@ import java.util.Optional
 
 /**
  * Provides currencies for the tests of the library.
- *
- * The provider is listed in `META-INF/services/io.spine.money.CurrencyProvider`
- * among the test resources.
  */
+@AutoService(CurrencyProvider::class)
 internal class TestCurrencyProvider : CurrencyProvider {
 
     override fun find(code: String): Optional<CurrencyInfo> = when (code) {

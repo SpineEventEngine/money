@@ -13,7 +13,9 @@
  */
 
 import io.spine.dependency.lib.AutoService
+import io.spine.dependency.lib.AutoServiceKsp
 import io.spine.dependency.local.Base
+import io.spine.dependency.local.Logging
 import io.spine.dependency.local.TestLib
 import io.spine.dependency.local.Validation
 import io.spine.gradle.publish.IncrementGuard
@@ -31,9 +33,12 @@ dependencies {
     compileOnly(AutoService.annotations)
 
     api(Base.lib)
+    implementation(Logging.lib)
     implementation(Validation.runtime)
 
     testImplementation(TestLib.lib)
+    testCompileOnly(AutoService.annotations)
+    kspTest(AutoServiceKsp.processor)
 }
 
 configurations {

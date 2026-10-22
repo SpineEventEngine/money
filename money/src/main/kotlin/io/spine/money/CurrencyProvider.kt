@@ -12,36 +12,37 @@
  * and limitations under the License.
  */
 
-package io.spine.money;
+package io.spine.money
 
-import io.spine.annotation.SPI;
-
-import java.util.Optional;
+import io.spine.annotation.SPI
+import java.util.Optional
 
 /**
  * Provides information about currencies.
  *
- * <p>The library finds providers using {@link java.util.ServiceLoader}. To make a provider
- * available, list it in the {@code META-INF/services/io.spine.money.CurrencyProvider} file,
- * or annotate it with {@code @AutoService(CurrencyProvider.class)}.
+ * The library finds providers using [java.util.ServiceLoader]. To make a provider
+ * available, list it in the `META-INF/services/io.spine.money.CurrencyProvider` file,
+ * or annotate it with `@AutoService(CurrencyProvider.class)`.
  *
- * <p>When looking up a currency, the library asks the providers in the order
- * the {@code ServiceLoader} returns them, and uses the first non-empty answer.
+ * When looking up a currency, the library asks the providers in the order
+ * the `ServiceLoader` returns them, and uses the first non-empty answer.
  * The built-in provider of ISO 4217 currencies is asked last. So, an application may both
  * add currencies and replace the information about ISO 4217 currencies.
+ *
+ * If a provider fails to load, the library logs a warning and skips the provider.
  */
 @SPI
-public interface CurrencyProvider {
+public fun interface CurrencyProvider {
 
     /**
      * Finds information about the currency with the given code.
      *
-     * <p>The returned information must be about the currency with the given code.
+     * The returned information must be about the currency with the given code.
      *
      * @param code
-     *         the code of the currency, which is a valid value of {@link Currency#getCode()}
-     * @return information about the currency, or an empty {@code Optional} if
+     *         the code of the currency, which is a valid value of [Currency.getCode]
+     * @return information about the currency, or an empty `Optional` if
      *         this provider does not know the currency
      */
-    Optional<CurrencyInfo> find(String code);
+    public fun find(code: String): Optional<CurrencyInfo>
 }

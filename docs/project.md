@@ -19,13 +19,15 @@ experimental, so its API is likely to change. It is published as `io.spine:spine
 ## Architecture
 
 Role in the org: a **library** and a leaf of the dependency graph — no other SDK
-repository depends on it. It builds on `base-libraries` and the `validation`
-runtime, uses the Spine Compiler and CoreJvm Compiler plugins to generate code
-from its Protobuf types, and uses `testlib` in its tests.
+repository depends on it. It builds on `base-libraries`, `logging`, and the
+`validation` runtime, uses the Spine Compiler and CoreJvm Compiler plugins to
+generate code from its Protobuf types, and uses `testlib` in its tests.
 
 - The root project `spine-money` has a single module, `money`, which applies the
-  shared `jvm-module` convention plugin. Its Java sources are in `io.spine.money`,
-  and its Protobuf types in `spine/money/money.proto`.
+  shared `jvm-module` convention plugin. Its Kotlin and Java sources are in
+  `io.spine.money`, and its Protobuf types in `spine/money/money.proto`. New code
+  and tests are Kotlin; test `CurrencyProvider`s are registered with `@AutoService`
+  through KSP.
 - The root `build.gradle.kts` forces many versions on the buildscript classpath:
   the published compiler plugins were built against earlier generations of
   their dependencies, and `failOnVersionConflict()` rejects any disagreement.

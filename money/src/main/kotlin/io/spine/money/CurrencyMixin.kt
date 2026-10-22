@@ -12,43 +12,39 @@
  * and limitations under the License.
  */
 
-package io.spine.money;
+package io.spine.money
 
-import io.spine.annotation.GeneratedMixin;
+import io.spine.annotation.GeneratedMixin
 
 /**
- * The mixin for the {@link Currency} message.
+ * The mixin for the [Currency] message.
  */
 @GeneratedMixin
-interface CurrencyMixin extends CurrencyOrBuilder {
+public interface CurrencyMixin : CurrencyOrBuilder {
 
     /**
      * Obtains information about this currency.
      *
      * @throws UnknownCurrencyException
-     *         if no {@link CurrencyProvider} knows this currency
+     *         if no [CurrencyProvider] knows this currency
      * @throws IllegalArgumentException
      *         if the code of this currency is invalid
-     * @see Currencies#find(Currency)
+     * @see Currencies.find
      */
-    default CurrencyInfo info() {
-        var code = getCode();
-        return CurrencyProviders.find(code)
-                                .orElseThrow(() -> new UnknownCurrencyException(code));
-    }
+    public fun info(): CurrencyInfo =
+        CurrencyProviders.find(code)
+            .orElseThrow { UnknownCurrencyException(code) }
 
     /**
      * Obtains the number of digits after the decimal separator for this currency.
      *
-     * <p>The value is less than zero if there are no minor units for this currency
+     * The value is less than zero if there are no minor units for this currency
      * (e.g., for gold).
      *
      * @throws UnknownCurrencyException
-     *         if no {@link CurrencyProvider} knows this currency
+     *         if no [CurrencyProvider] knows this currency
      * @throws IllegalArgumentException
      *         if the code of this currency is invalid
      */
-    default int fractionDigits() {
-        return info().getFractionDigits();
-    }
+    public fun fractionDigits(): Int = info().fractionDigits
 }

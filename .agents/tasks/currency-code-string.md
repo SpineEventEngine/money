@@ -76,3 +76,8 @@ being stored in the schema.
   `Currencies.of` now upper-cases ASCII letters only (`ß` and `ı` were turning
   into valid codes); the new tests are Kotlin `Spec` suites with Kotest
   assertions; `CurrencyProvider` is `@SPI`; Javadoc and wording fixes.
+- 2026-10-22 22:30 — at the user's request: converted the new production code
+  and the existing tests to Kotlin; added Spine Logging; a provider that fails
+  to load is now skipped with a warning; test providers are registered with
+  `@AutoService` through KSP; a test checks the code pattern against
+  `money.proto`.

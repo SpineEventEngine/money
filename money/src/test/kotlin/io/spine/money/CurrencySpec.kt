@@ -50,7 +50,7 @@ internal class CurrencySpec {
         val exception = shouldThrow<UnknownCurrencyException> {
             currency.info()
         }
-        exception.code() shouldBe "NOPE"
+        exception.code shouldBe "NOPE"
         exception.message shouldContain "`NOPE`"
     }
 }
