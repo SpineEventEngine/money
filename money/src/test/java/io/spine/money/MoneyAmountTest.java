@@ -28,9 +28,9 @@ class MoneyAmountTest {
     void createPositiveValue() {
         long units = 639_100_000_000L;
         int nanos = 949_000_000;
-        MoneyAmount money = MoneyAmount.of(Currency.USD, units, nanos);
+        MoneyAmount money = MoneyAmount.of(Currencies.USD, units, nanos);
 
-        assertEquals(Currency.USD, money.currency());
+        assertEquals(Currencies.USD, money.currency());
         assertEquals(units, money.units());
         assertEquals(nanos, money.nanos());
     }
@@ -41,9 +41,9 @@ class MoneyAmountTest {
         long units = -1;
         int nanos = -750_000_000;
 
-        MoneyAmount money = MoneyAmount.of(Currency.EUR, units, nanos);
+        MoneyAmount money = MoneyAmount.of(Currencies.EUR, units, nanos);
 
-        assertEquals(Currency.EUR, money.currency());
+        assertEquals(Currencies.EUR, money.currency());
         assertEquals(units, money.units());
         assertEquals(nanos, money.nanos());
     }
@@ -53,7 +53,7 @@ class MoneyAmountTest {
     void createOfMoney() {
         Money money = Money
                 .newBuilder()
-                .setCurrency(Currency.UAH)
+                .setCurrency(Currencies.of("UAH"))
                 .setUnits(1)
                 .build();
         MoneyAmount amount = MoneyAmount.of(money);
@@ -66,12 +66,30 @@ class MoneyAmountTest {
     void differentSigns() {
         assertThrows(
                 IllegalArgumentException.class,
-                () -> MoneyAmount.of(Currency.EUR, -1, 999_999)
+                () -> MoneyAmount.of(Currencies.EUR, -1, 999_999)
         );
 
         assertThrows(
                 IllegalArgumentException.class,
-                () -> MoneyAmount.of(Currency.EUR, 10, -999_999)
+                () -> MoneyAmount.of(Currencies.EUR, 10, -999_999)
         );
+    }
+
+    @Test
+    @DisplayName("reject a currency without a code")
+    void noCurrencyCode() {
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> MoneyAmount.of(Currency.getDefaultInstance(), 1, 0)
+        );
+    }
+
+    @Test
+    @DisplayName("accept a currency not known to any `CurrencyProvider`")
+    void unknownCurrency() {
+        var currency = Currencies.of("NOPE");
+        var amount = MoneyAmount.of(currency, 1, 0);
+
+        assertEquals(currency, amount.currency());
     }
 }

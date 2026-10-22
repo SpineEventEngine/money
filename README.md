@@ -26,6 +26,43 @@ dependencies {
 }
 ```
 
+## Currencies
+
+A `Currency` is identified by its code. It may be an ISO 4217 code, such as `EUR`,
+or a code your application defines, such as `BTC`:
+
+```java
+var euro = Currencies.EUR;
+var bitcoin = Currencies.of("BTC");
+var price = MoneyAmount.of(euro, 19, 990_000_000);
+```
+
+The library knows the ISO 4217 currencies supported by the Java runtime.
+For example, `Currencies.JPY.fractionDigits()` returns `0`.
+
+To describe other currencies, or to change the information about ISO 4217 ones,
+implement `CurrencyProvider` and register it for `java.util.ServiceLoader`:
+
+```java
+@AutoService(CurrencyProvider.class)
+public final class CryptoCurrencies implements CurrencyProvider {
+
+    @Override
+    public Optional<CurrencyInfo> find(String code) {
+        if (!code.equals("BTC")) {
+            return Optional.empty();
+        }
+        var info = CurrencyInfo.newBuilder()
+                .setCurrency(Currencies.of("BTC"))
+                .setName("Bitcoin")
+                .setSymbol("₿")
+                .setFractionDigits(8)
+                .build();
+        return Optional.of(info);
+    }
+}
+```
+
 [gh-actions]: https://github.com/SpineEventEngine/money/actions
 [ubuntu-build-badge]: https://github.com/SpineEventEngine/money/actions/workflows/build-on-ubuntu.yml/badge.svg
 [codecov-badge]: https://codecov.io/gh/SpineEventEngine/money/branch/master/graph/badge.svg

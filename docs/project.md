@@ -4,12 +4,18 @@
 
 Spine Money provides Protobuf-based types for monetary values and Java utilities
 for working with them. The `Money` message holds an amount in whole units and
-nano-units of a `Currency`, an enum of ISO 4217 currencies whose constants carry
-`CurrencyOptions` (name, symbol, numeric code, and `exponent_digits`, the number
-of minor-unit digits). `MoneyAmount` is a validated wrapper around a `Money`
-value; its factories check the value through the package-private
-`MoneyPreconditions`. The library is experimental, so its API is likely to
-change. It is published as `io.spine:spine-money`.
+nano-units of a `Currency`, a message that wraps a currency code: an ISO 4217
+code or a code an application defines (e.g. for a cryptocurrency). Information
+about a currency (`CurrencyInfo`: name, symbol, numeric code, and the number of
+fraction digits) is looked up at runtime, not stored with the value.
+`CurrencyProvider` implementations found by `ServiceLoader` supply it, and the
+built-in `JdkCurrencyProvider`, backed by `java.util.Currency`, covers ISO 4217.
+`Currencies` creates `Currency` values and finds their information;
+`CurrencyMixin` adds `info()` and `fractionDigits()` to `Currency`.
+`MoneyAmount` is a validated wrapper around a `Money` value; its factories check
+the value through the package-private `MoneyPreconditions`. The library is
+experimental, so its API is likely to change. It is published as
+`io.spine:spine-money`.
 
 ## Architecture
 

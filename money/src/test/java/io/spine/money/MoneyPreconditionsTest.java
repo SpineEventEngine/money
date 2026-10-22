@@ -76,16 +76,47 @@ class MoneyPreconditionsTest extends UtilityClassTest<MoneyPreconditions> {
     class CurrencyValue {
 
         @Test
-        @DisplayName("is invalid when UNDEFINED or UNRECOGNIZED")
-        void invalid() {
-            assertInvalid(Currency.CURRENCY_UNDEFINED);
-            assertInvalid(Currency.UNRECOGNIZED);
+        @DisplayName("is invalid when the code is not set")
+        void noCode() {
+            assertInvalid(Currency.getDefaultInstance());
         }
 
         @Test
-        @DisplayName("is valid")
-        void valid() {
-            assertValid(Currency.forNumber(random(Currency.AED_VALUE, Currency.ZWL_VALUE)));
+        @DisplayName("is invalid when the code is not in upper case")
+        void lowerCase() {
+            assertInvalid(currency("usd"));
+            assertInvalid(currency("Usd"));
+        }
+
+        @Test
+        @DisplayName("is invalid when the code is too short or too long")
+        void length() {
+            assertInvalid(currency("U"));
+            assertInvalid(currency("ABCDEFGHIJKLM"));
+        }
+
+        @Test
+        @DisplayName("is invalid when the code has other symbols than ASCII letters or digits")
+        void symbols() {
+            assertInvalid(currency("US D"));
+            assertInvalid(currency("US-D"));
+            assertInvalid(currency("ÉUR"));
+        }
+
+        @Test
+        @DisplayName("is valid for ISO 4217 codes")
+        void iso() {
+            assertValid(currency("USD"));
+            assertValid(currency("XAU"));
+        }
+
+        @Test
+        @DisplayName("is valid for codes not defined by ISO 4217")
+        void nonIso() {
+            assertValid(currency("OP"));
+            assertValid(currency("BTC"));
+            assertValid(currency("1INCH"));
+            assertValid(currency("ABCDEFGHIJKL"));
         }
 
         private void assertValid(Currency value) {
@@ -185,15 +216,15 @@ class MoneyPreconditionsTest extends UtilityClassTest<MoneyPreconditions> {
             @Test
             @DisplayName("currency is invalid, unit and nanos are positive")
             void currencyValidNanosUnitsPositive() {
-                assertInvalid(Currency.UNRECOGNIZED, Long.MAX_VALUE, NANOS_MAX);
-                assertInvalid(Currency.CURRENCY_UNDEFINED, Long.MAX_VALUE, NANOS_MAX);
+                assertInvalid(currency("usd"), Long.MAX_VALUE, NANOS_MAX);
+                assertInvalid(Currency.getDefaultInstance(), Long.MAX_VALUE, NANOS_MAX);
             }
 
             @Test
             @DisplayName("currency is invalid, unit and nanos are negative")
             void currencyValidNanosUnitsNegative() {
-                assertInvalid(Currency.UNRECOGNIZED, Long.MIN_VALUE, NANOS_MIN);
-                assertInvalid(Currency.CURRENCY_UNDEFINED, Long.MIN_VALUE, NANOS_MIN);
+                assertInvalid(currency("usd"), Long.MIN_VALUE, NANOS_MIN);
+                assertInvalid(Currency.getDefaultInstance(), Long.MIN_VALUE, NANOS_MIN);
             }
 
             @Test
@@ -213,21 +244,21 @@ class MoneyPreconditionsTest extends UtilityClassTest<MoneyPreconditions> {
             @Test
             @DisplayName("currency is invalid, units are fine, but nanos out of bounds")
             void currencyInvalidUnitsFineNanosOutOfBounds() {
-                assertInvalid(Currency.CURRENCY_UNDEFINED, Long.MIN_VALUE, NANOS_MIN - 1);
-                assertInvalid(Currency.CURRENCY_UNDEFINED, Long.MAX_VALUE, NANOS_MAX + 1);
+                assertInvalid(Currency.getDefaultInstance(), Long.MIN_VALUE, NANOS_MIN - 1);
+                assertInvalid(Currency.getDefaultInstance(), Long.MAX_VALUE, NANOS_MAX + 1);
 
-                assertInvalid(Currency.UNRECOGNIZED, Long.MIN_VALUE, NANOS_MIN - 1);
-                assertInvalid(Currency.UNRECOGNIZED, Long.MAX_VALUE, NANOS_MAX + 1);
+                assertInvalid(currency("usd"), Long.MIN_VALUE, NANOS_MIN - 1);
+                assertInvalid(currency("usd"), Long.MAX_VALUE, NANOS_MAX + 1);
             }
 
             @Test
             @DisplayName("currency is invalid, units and nanos have different sign")
             void currencyInvalidUnitsNanosHaveDifferentSign() {
-                assertInvalid(Currency.CURRENCY_UNDEFINED, Long.MIN_VALUE, NANOS_MAX);
-                assertInvalid(Currency.CURRENCY_UNDEFINED, Long.MAX_VALUE, NANOS_MIN);
+                assertInvalid(Currency.getDefaultInstance(), Long.MIN_VALUE, NANOS_MAX);
+                assertInvalid(Currency.getDefaultInstance(), Long.MAX_VALUE, NANOS_MIN);
 
-                assertInvalid(Currency.UNRECOGNIZED, Long.MIN_VALUE, NANOS_MAX);
-                assertInvalid(Currency.UNRECOGNIZED, Long.MAX_VALUE, NANOS_MIN);
+                assertInvalid(currency("usd"), Long.MIN_VALUE, NANOS_MAX);
+                assertInvalid(currency("usd"), Long.MAX_VALUE, NANOS_MIN);
             }
 
             private void assertInvalid(Currency currency, long units, int nanos) {
@@ -236,7 +267,16 @@ class MoneyPreconditionsTest extends UtilityClassTest<MoneyPreconditions> {
         }
 
         private Currency validCurrency() {
-            return Currency.forNumber(Currency.AED_VALUE);
+            return currency("AED");
         }
+    }
+
+    /**
+     * Creates a currency without validating it, so that the code may be invalid.
+     */
+    private static Currency currency(String code) {
+        return Currency.newBuilder()
+                .setCode(code)
+                .buildPartial();
     }
 }

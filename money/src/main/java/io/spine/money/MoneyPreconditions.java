@@ -14,6 +14,8 @@
 
 package io.spine.money;
 
+import java.util.regex.Pattern;
+
 import static com.google.common.base.Preconditions.checkArgument;
 
 /**
@@ -23,6 +25,13 @@ final class MoneyPreconditions {
 
     static final int NANOS_MIN = -999_999_999;
     static final int NANOS_MAX = 999_999_999;
+
+    /**
+     * The pattern of a currency code.
+     *
+     * <p>Must match the pattern of the {@code Currency.code} field in {@code money.proto}.
+     */
+    private static final Pattern CURRENCY_CODE = Pattern.compile("[A-Z0-9]{2,12}");
 
     /** Prevents instantiation of this utility class. */
     private MoneyPreconditions() {
@@ -42,9 +51,12 @@ final class MoneyPreconditions {
         return true;
     }
 
+    static boolean isValidCode(String currencyCode) {
+        return CURRENCY_CODE.matcher(currencyCode).matches();
+    }
+
     static boolean isValid(Currency currency) {
-        return currency != Currency.CURRENCY_UNDEFINED &&
-                currency != Currency.UNRECOGNIZED;
+        return isValidCode(currency.getCode());
     }
 
     static boolean isValid(Currency currency, long units, int nanos) {
@@ -54,8 +66,15 @@ final class MoneyPreconditions {
         return validCurrency && validNanos && validUnits;
     }
 
+    static void checkValidCode(String currencyCode) {
+        checkArgument(isValidCode(currencyCode),
+                      "A currency code must consist of 2 to 12 uppercase ASCII letters or digits." +
+                              " Encountered: `%s`.",
+                      currencyCode);
+    }
+
     static void checkValid(Currency currency, long units, int nanos) {
-        checkArgument(isValid(currency), "A currency must be defined.");
+        checkValidCode(currency.getCode());
         checkArgument(isValid(nanos),
                       "Nanos (%s) must be in range [-999,999,999, +999,999,999].",
                       nanos);
