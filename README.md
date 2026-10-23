@@ -40,6 +40,10 @@ var price = MoneyAmount.of(euro, 19, 990_000_000);
 The library knows the ISO 4217 currencies supported by the Java runtime.
 For example, `Currencies.JPY.fractionDigits()` returns `0`.
 
+`Money` keeps up to nine digits after the decimal point. That is enough for
+fiat currencies, Bitcoin, and stablecoins such as USDC, but not for Ether
+or other tokens with 18 decimals.
+
 To describe other currencies, or to change the information about ISO 4217 ones,
 implement `CurrencyProvider` and register it for `java.util.ServiceLoader`:
 

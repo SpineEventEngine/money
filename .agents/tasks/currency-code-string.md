@@ -45,7 +45,8 @@ being stored in the schema.
 ### Out of scope
 
 - Precision beyond 9 fraction digits (needed for ETH and most ERC-20 tokens).
-  Under discussion.
+  Decided: `Money` keeps 9 digits for 2.0. If 18-decimal amounts are needed,
+  a separate high-precision message is to be added, which is non-breaking.
 - Conversions to and from JavaMoney (#3): a separate PR.
 - Extension `1025`: the ISO enum will probably stay under a different name,
   which would keep the extension in use. **Return to this only after all the
@@ -90,3 +91,5 @@ being stored in the schema.
 - 2026-10-23 — user decisions: the JSON shape change is not a concern; #3 goes
   in a separate PR; the ISO enum will probably stay under another name, so
   extension `1025` is deferred until everything else is resolved.
+- 2026-10-23 — user decision: `Money` keeps 9 fraction digits for 2.0
+  (considered and declined: a `sint64` fraction in 10^-18 units).

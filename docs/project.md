@@ -16,6 +16,12 @@ built-in `JdkCurrencyProvider`, backed by `java.util.Currency`, covers ISO 4217.
 the value through the package-private `MoneyPreconditions`. The library is
 experimental, so its API is likely to change. It is published as `io.spine:spine-money`.
 
+`Money` keeps nine fraction digits, like `google.type.Money`. That covers fiat
+currencies, Bitcoin (8), and stablecoins such as USDC (6), but not Ether or
+other 18-decimal tokens. This is a deliberate decision for 2.0: if such amounts
+are needed, a separate high-precision message is to be added instead of changing
+`Money`, which keeps the change non-breaking.
+
 ## Architecture
 
 Role in the org: a **library** and a leaf of the dependency graph — no other SDK
@@ -23,7 +29,7 @@ repository depends on it. It builds on `base-libraries`, `logging`, and the
 `validation` runtime, uses the Spine Compiler and CoreJvm Compiler plugins to
 generate code from its Protobuf types, and uses `testlib` in its tests.
 
-- The root project `spine-money` has a single module, `money`, which applies the
+- The root project `money` has a single module, `money`, which applies the
   shared `jvm-module` convention plugin. Its Kotlin and Java sources are in
   `io.spine.money`, and its Protobuf types in `spine/money/money.proto`. New code
   and tests are Kotlin; test `CurrencyProvider`s are registered with `@AutoService`
