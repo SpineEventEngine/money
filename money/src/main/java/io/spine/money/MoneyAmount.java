@@ -49,17 +49,17 @@ public final class MoneyAmount extends ValueHolder<Money> {
      *         the currency of the amount of money
      * @param units
      *         the amount of whole currency units
-     * @param nanos
-     *         the number of (10^-9) units of the amount for representing amounts in
+     * @param attos
+     *         the number of (10^-18) units of the amount for representing amounts in
      *         minor currency units (for the currencies that support such amounts).
      */
-    public static MoneyAmount of(Currency currency, long units, int nanos) {
+    public static MoneyAmount of(Currency currency, long units, long attos) {
         checkNotNull(currency);
-        checkValid(currency, units, nanos);
+        checkValid(currency, units, attos);
         var amount = Money.newBuilder()
                 .setCurrency(currency)
                 .setUnits(units)
-                .setNanos(nanos)
+                .setAttos(attos)
                 .build();
         return new MoneyAmount(amount);
     }
@@ -79,13 +79,13 @@ public final class MoneyAmount extends ValueHolder<Money> {
     }
 
     /**
-     * Obtains the number of (10^-9) units of the amount for representing amounts in
+     * Obtains the number of (10^-18) units of the amount for representing amounts in
      * minor currency units (for the currencies that support such amounts).
      *
      * <p>If the currency does not support minor currency units the value returned by
      * this method for instances with such a currency will always be zero.
      */
-    public int nanos() {
-        return value().getNanos();
+    public long attos() {
+        return value().getAttos();
     }
 }

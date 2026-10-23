@@ -32,6 +32,9 @@ being stored in the schema.
   2–12 uppercase ASCII letters or digits.
 - `Money.currency` moves to field `4`; field `1` is reserved, so old data keeps the
   enum number as an unknown field instead of being misread.
+- `int32 nanos` (field `3`) becomes `sint64 attos = 5`, counting 10^-18 units, so
+  `Money` holds 18 fraction digits (enough for Ether). Field `3` is reserved for
+  the same reason as field `1`.
 - `CurrencyOptions` becomes `CurrencyInfo`, a standalone message. The
   `EnumValueOptions` extension `1025` is removed.
 - Metadata comes from `CurrencyProvider` implementations found by `ServiceLoader`.
@@ -44,9 +47,8 @@ being stored in the schema.
 
 ### Out of scope
 
-- Precision beyond 9 fraction digits (needed for ETH and most ERC-20 tokens).
-  Decided: `Money` keeps 9 digits for 2.0. If 18-decimal amounts are needed,
-  a separate high-precision message is to be added, which is non-breaking.
+- Precision beyond 18 fraction digits: the most a signed 64-bit fraction holds.
+  Such tokens would need a separate high-precision message.
 - Conversions to and from JavaMoney (#3): a separate PR.
 - Extension `1025`: the ISO enum will probably stay under a different name,
   which would keep the extension in use. **Return to this only after all the
@@ -93,3 +95,5 @@ being stored in the schema.
   extension `1025` is deferred until everything else is resolved.
 - 2026-10-23 — user decision: `Money` keeps 9 fraction digits for 2.0
   (considered and declined: a `sint64` fraction in 10^-18 units).
+- 2026-10-23 — user decision, replacing the previous one: support new currencies
+  such as Ether now. `nanos` (field `3`, reserved) becomes `sint64 attos = 5`.

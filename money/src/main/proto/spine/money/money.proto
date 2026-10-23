@@ -31,13 +31,16 @@ option (experimental_all) = true;
 //   https://raw.githubusercontent.com/googleapis/googleapis/master/google/type/money.proto
 // But in our type we use the `Currency` message instead of a string currency code
 // to have the code validated and to provide a Java API for currencies.
+// Also, we keep the fractional part in atto (10^-18) units instead of nanos (10^-9)
+// to support currencies with up to 18 decimal places, such as Ether.
 //
 
 // An amount of money in its currency type.
 message Money {
 
-    // Field 1 held the `Currency` enum before version 2.0.0.
-    reserved 1;
+    // Before version 2.0.0, field 1 held the `Currency` enum, and
+    // field 3 held the `int32 nanos` (10^-9) part of the amount.
+    reserved 1, 3;
 
     // The currency of the amount of money.
     Currency currency = 4 [(required) = true];
@@ -48,15 +51,17 @@ message Money {
     //
     int64 units = 2;
 
-    // Number of nano (10^-9) units of the amount.
+    // Number of atto (10^-18) units of the amount.
     //
-    // The value must be between -999,999,999 and +999,999,999 inclusive.
-    // If `units` is positive, `nanos` must be positive or zero.
-    // If `units` is zero, `nanos` can be positive, zero, or negative.
-    // If `units` is negative, `nanos` must be negative or zero.
-    // For example $-1.75 is represented as `units`=-1 and `nanos`=-750,000,000.
+    // The value must be between -999,999,999,999,999,999 and +999,999,999,999,999,999
+    // inclusive.
+    // If `units` is positive, `attos` must be positive or zero.
+    // If `units` is zero, `attos` can be positive, zero, or negative.
+    // If `units` is negative, `attos` must be negative or zero.
+    // For example $-1.75 is represented as `units`=-1 and
+    // `attos`=-750,000,000,000,000,000.
     //
-    int32 nanos = 3;
+    sint64 attos = 5;
 }
 
 // A currency identified by its code.

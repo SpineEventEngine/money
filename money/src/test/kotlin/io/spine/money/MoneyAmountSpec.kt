@@ -25,25 +25,47 @@ internal class MoneyAmountSpec {
     @Test
     fun `create positive amounts`() {
         val units = 639_100_000_000L
-        val nanos = 949_000_000
+        val attos = 949_000_000_000_000_000L
 
-        val amount = MoneyAmount.of(Currencies.USD, units, nanos)
+        val amount = MoneyAmount.of(Currencies.USD, units, attos)
 
         amount.currency() shouldBe Currencies.USD
         amount.units() shouldBe units
-        amount.nanos() shouldBe nanos
+        amount.attos() shouldBe attos
     }
 
     @Test
     fun `create negative amounts`() {
         val units = -1L
-        val nanos = -750_000_000
+        val attos = -750_000_000_000_000_000L
 
-        val amount = MoneyAmount.of(Currencies.EUR, units, nanos)
+        val amount = MoneyAmount.of(Currencies.EUR, units, attos)
 
         amount.currency() shouldBe Currencies.EUR
         amount.units() shouldBe units
-        amount.nanos() shouldBe nanos
+        amount.attos() shouldBe attos
+    }
+
+    @Test
+    fun `keep all 18 fraction digits of Ether`() {
+        val ether = Currencies.of("ETH")
+        val attos = 123_456_789_123_456_789L
+
+        val amount = MoneyAmount.of(ether, 1, attos)
+        val oneWei = MoneyAmount.of(ether, 0, 1)
+
+        amount.attos() shouldBe attos
+        oneWei.attos() shouldBe 1L
+    }
+
+    @Test
+    fun `reject attos outside the range`() {
+        shouldThrow<IllegalArgumentException> {
+            MoneyAmount.of(Currencies.EUR, 0, 1_000_000_000_000_000_000L)
+        }
+        shouldThrow<IllegalArgumentException> {
+            MoneyAmount.of(Currencies.EUR, 0, -1_000_000_000_000_000_000L)
+        }
     }
 
     @Test

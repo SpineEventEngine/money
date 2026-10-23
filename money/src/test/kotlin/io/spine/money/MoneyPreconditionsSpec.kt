@@ -15,12 +15,12 @@
 package io.spine.money
 
 import io.kotest.matchers.shouldBe
-import io.spine.money.MoneyPreconditions.NANOS_MAX
-import io.spine.money.MoneyPreconditions.NANOS_MIN
+import io.spine.money.MoneyPreconditions.ATTOS_MAX
+import io.spine.money.MoneyPreconditions.ATTOS_MIN
 import io.spine.money.MoneyPreconditions.isValid
-import io.spine.testing.TestValues.random
 import io.spine.testing.UtilityClassTest
 import io.spine.validation.NonValidated
+import kotlin.random.Random
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -30,27 +30,27 @@ internal class MoneyPreconditionsSpec :
     UtilityClassTest<MoneyPreconditions>(MoneyPreconditions::class.java) {
 
     @Nested inner class
-    `check nanos` {
+    `check attos` {
 
         @Test
         fun `accepting the minimum`() {
-            isValid(NANOS_MIN) shouldBe true
+            isValid(ATTOS_MIN) shouldBe true
         }
 
         @Test
         fun `accepting the maximum`() {
-            isValid(NANOS_MAX) shouldBe true
+            isValid(ATTOS_MAX) shouldBe true
         }
 
         @Test
         fun `accepting a value in the range`() {
-            isValid(random(NANOS_MIN, NANOS_MAX)) shouldBe true
+            isValid(Random.nextLong(ATTOS_MIN, ATTOS_MAX + 1)) shouldBe true
         }
 
         @Test
         fun `rejecting values outside the range`() {
-            isValid(NANOS_MIN - 1) shouldBe false
-            isValid(NANOS_MAX + 1) shouldBe false
+            isValid(ATTOS_MIN - 1) shouldBe false
+            isValid(ATTOS_MAX + 1) shouldBe false
         }
     }
 
@@ -97,86 +97,86 @@ internal class MoneyPreconditionsSpec :
     }
 
     @Nested inner class
-    `check units and nanos` {
+    `check units and attos` {
 
         @Test
         fun `accepting both negative`() {
-            isValid(Long.MIN_VALUE, NANOS_MIN) shouldBe true
+            isValid(Long.MIN_VALUE, ATTOS_MIN) shouldBe true
         }
 
         @Test
         fun `accepting both positive`() {
-            isValid(Long.MAX_VALUE, NANOS_MAX) shouldBe true
+            isValid(Long.MAX_VALUE, ATTOS_MAX) shouldBe true
         }
 
         @Test
         fun `accepting one of them being zero`() {
             isValid(Long.MAX_VALUE, 0) shouldBe true
-            isValid(0, NANOS_MIN) shouldBe true
+            isValid(0, ATTOS_MIN) shouldBe true
         }
 
         @Test
         fun `rejecting different signs`() {
-            isValid(Long.MIN_VALUE, NANOS_MAX) shouldBe false
-            isValid(Long.MAX_VALUE, NANOS_MIN) shouldBe false
+            isValid(Long.MIN_VALUE, ATTOS_MAX) shouldBe false
+            isValid(Long.MAX_VALUE, ATTOS_MIN) shouldBe false
         }
 
         @Test
-        fun `rejecting nanos outside the range`() {
-            isValid(Long.MIN_VALUE, NANOS_MIN - 1) shouldBe false
-            isValid(Long.MIN_VALUE, NANOS_MAX + 1) shouldBe false
+        fun `rejecting attos outside the range`() {
+            isValid(Long.MIN_VALUE, ATTOS_MIN - 1) shouldBe false
+            isValid(Long.MIN_VALUE, ATTOS_MAX + 1) shouldBe false
         }
     }
 
     @Nested inner class
-    `check currency, units, and nanos together` {
+    `check currency, units, and attos together` {
 
         private val validCurrency = currency("AED")
         private val invalidCurrencies = listOf(Currency.getDefaultInstance(), currency("usd"))
 
         @Test
-        fun `accepting a valid currency with positive units and nanos`() {
-            isValid(validCurrency, Long.MAX_VALUE, NANOS_MAX) shouldBe true
+        fun `accepting a valid currency with positive units and attos`() {
+            isValid(validCurrency, Long.MAX_VALUE, ATTOS_MAX) shouldBe true
         }
 
         @Test
-        fun `accepting a valid currency with negative units and nanos`() {
-            isValid(validCurrency, Long.MIN_VALUE, NANOS_MIN) shouldBe true
+        fun `accepting a valid currency with negative units and attos`() {
+            isValid(validCurrency, Long.MIN_VALUE, ATTOS_MIN) shouldBe true
         }
 
         @Test
-        fun `rejecting an invalid currency with valid units and nanos`() {
+        fun `rejecting an invalid currency with valid units and attos`() {
             invalidCurrencies.forEach {
-                isValid(it, Long.MAX_VALUE, NANOS_MAX) shouldBe false
-                isValid(it, Long.MIN_VALUE, NANOS_MIN) shouldBe false
+                isValid(it, Long.MAX_VALUE, ATTOS_MAX) shouldBe false
+                isValid(it, Long.MIN_VALUE, ATTOS_MIN) shouldBe false
             }
         }
 
         @Test
-        fun `rejecting a valid currency with units and nanos of different signs`() {
-            isValid(validCurrency, Long.MIN_VALUE, NANOS_MAX) shouldBe false
-            isValid(validCurrency, Long.MAX_VALUE, NANOS_MIN) shouldBe false
+        fun `rejecting a valid currency with units and attos of different signs`() {
+            isValid(validCurrency, Long.MIN_VALUE, ATTOS_MAX) shouldBe false
+            isValid(validCurrency, Long.MAX_VALUE, ATTOS_MIN) shouldBe false
         }
 
         @Test
-        fun `rejecting a valid currency with nanos outside the range`() {
-            isValid(validCurrency, Long.MIN_VALUE, NANOS_MIN - 1) shouldBe false
-            isValid(validCurrency, Long.MAX_VALUE, NANOS_MAX + 1) shouldBe false
+        fun `rejecting a valid currency with attos outside the range`() {
+            isValid(validCurrency, Long.MIN_VALUE, ATTOS_MIN - 1) shouldBe false
+            isValid(validCurrency, Long.MAX_VALUE, ATTOS_MAX + 1) shouldBe false
         }
 
         @Test
-        fun `rejecting an invalid currency with nanos outside the range`() {
+        fun `rejecting an invalid currency with attos outside the range`() {
             invalidCurrencies.forEach {
-                isValid(it, Long.MIN_VALUE, NANOS_MIN - 1) shouldBe false
-                isValid(it, Long.MAX_VALUE, NANOS_MAX + 1) shouldBe false
+                isValid(it, Long.MIN_VALUE, ATTOS_MIN - 1) shouldBe false
+                isValid(it, Long.MAX_VALUE, ATTOS_MAX + 1) shouldBe false
             }
         }
 
         @Test
-        fun `rejecting an invalid currency with units and nanos of different signs`() {
+        fun `rejecting an invalid currency with units and attos of different signs`() {
             invalidCurrencies.forEach {
-                isValid(it, Long.MIN_VALUE, NANOS_MAX) shouldBe false
-                isValid(it, Long.MAX_VALUE, NANOS_MIN) shouldBe false
+                isValid(it, Long.MIN_VALUE, ATTOS_MAX) shouldBe false
+                isValid(it, Long.MAX_VALUE, ATTOS_MIN) shouldBe false
             }
         }
     }
