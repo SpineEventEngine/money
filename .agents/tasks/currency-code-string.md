@@ -45,8 +45,14 @@ being stored in the schema.
 ### Out of scope
 
 - Precision beyond 9 fraction digits (needed for ETH and most ERC-20 tokens).
-- Conversions to and from JavaMoney (#3).
-- Telling the Protobuf team that extension `1025` is free; do it after merge.
+  Under discussion.
+- Conversions to and from JavaMoney (#3): a separate PR.
+- Extension `1025`: the ISO enum will probably stay under a different name,
+  which would keep the extension in use. **Return to this only after all the
+  other issues are resolved.**
+- Not done yet: listing the available currencies (the enum had `values()`),
+  migrating v1 data (the enum number survives as unknown field 1), and
+  localized currency names and symbols.
 
 ## Plan
 
@@ -81,3 +87,6 @@ being stored in the schema.
   to load is now skipped with a warning; test providers are registered with
   `@AutoService` through KSP; a test checks the code pattern against
   `money.proto`.
+- 2026-10-23 — user decisions: the JSON shape change is not a concern; #3 goes
+  in a separate PR; the ISO enum will probably stay under another name, so
+  extension `1025` is deferred until everything else is resolved.
