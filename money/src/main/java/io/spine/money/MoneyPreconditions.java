@@ -15,55 +15,57 @@
 package io.spine.money;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static io.spine.money.CurrencyCodes.checkValidCurrencyCode;
+import static io.spine.money.CurrencyCodes.isValidCurrencyCode;
 
 /**
  * Utilities for checking validity of money values.
  */
 final class MoneyPreconditions {
 
-    static final int NANOS_MIN = -999_999_999;
-    static final int NANOS_MAX = 999_999_999;
+    static final long ATTOS_MIN = -999_999_999_999_999_999L;
+    static final long ATTOS_MAX = 999_999_999_999_999_999L;
 
     /** Prevents instantiation of this utility class. */
     private MoneyPreconditions() {
     }
 
-    static boolean isValid(int nanos) {
-        return nanos >= NANOS_MIN && nanos <= NANOS_MAX;
+    static boolean isValid(long attos) {
+        return attos >= ATTOS_MIN && attos <= ATTOS_MAX;
     }
 
-    static boolean isValid(long units, int nanos) {
-        if (!isValid(nanos)) {
+    static boolean isValid(long units, long attos) {
+        if (!isValid(attos)) {
             return false;
         }
-        if (units < 0 || nanos < 0) {
-            return units <= 0 && nanos <= 0;
+        if (units < 0 || attos < 0) {
+            return units <= 0 && attos <= 0;
         }
         return true;
     }
 
     static boolean isValid(Currency currency) {
-        return currency != Currency.CURRENCY_UNDEFINED &&
-                currency != Currency.UNRECOGNIZED;
+        return isValidCurrencyCode(currency.getCode());
     }
 
-    static boolean isValid(Currency currency, long units, int nanos) {
+    static boolean isValid(Currency currency, long units, long attos) {
         var validCurrency = isValid(currency);
-        var validNanos = isValid(nanos);
-        var validUnits = isValid(units, nanos);
-        return validCurrency && validNanos && validUnits;
+        var validAttos = isValid(attos);
+        var validUnits = isValid(units, attos);
+        return validCurrency && validAttos && validUnits;
     }
 
-    static void checkValid(Currency currency, long units, int nanos) {
-        checkArgument(isValid(currency), "A currency must be defined.");
-        checkArgument(isValid(nanos),
-                      "Nanos (%s) must be in range [-999,999,999, +999,999,999].",
-                      nanos);
-        checkArgument(isValid(units, nanos),
-                      "`units` and `nanos` must be of the same sign.");
+    static void checkValid(Currency currency, long units, long attos) {
+        checkValidCurrencyCode(currency.getCode());
+        checkArgument(isValid(attos),
+                      "Attos (%s) must be in range" +
+                              " [-999,999,999,999,999,999, +999,999,999,999,999,999].",
+                      attos);
+        checkArgument(isValid(units, attos),
+                      "`units` and `attos` must be of the same sign.");
     }
 
     static void checkValid(Money amount) {
-        checkValid(amount.getCurrency(), amount.getUnits(), amount.getNanos());
+        checkValid(amount.getCurrency(), amount.getUnits(), amount.getAttos());
     }
 }
