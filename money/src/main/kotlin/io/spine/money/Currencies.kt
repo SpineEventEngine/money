@@ -19,6 +19,9 @@ import java.util.Optional
 
 /**
  * Utilities for working with [Currency] values.
+ *
+ * Provides constants for the G10 currencies, the most traded ones.
+ * Other currencies are available via [of].
  */
 public object Currencies {
 
@@ -49,6 +52,18 @@ public object Currencies {
     /** The Canadian dollar. */
     @JvmField
     public val CAD: Currency = of("CAD")
+
+    /** The New Zealand dollar. */
+    @JvmField
+    public val NZD: Currency = of("NZD")
+
+    /** The Swedish krona. */
+    @JvmField
+    public val SEK: Currency = of("SEK")
+
+    /** The Norwegian krone. */
+    @JvmField
+    public val NOK: Currency = of("NOK")
 
     /**
      * Creates a currency with the given code.

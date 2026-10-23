@@ -42,8 +42,9 @@ being stored in the schema.
   `java.util.Currency` is consulted last.
 - Unknown codes are checked lazily. `MoneyAmount` checks the code's syntax only;
   `CurrencyMixin.info()` throws `UnknownCurrencyException` for an unknown code.
-- `Currencies` holds `of(String)` and constants for the currencies Joda-Money has
-  constants for: USD, EUR, JPY, GBP, CHF, AUD, CAD.
+- `Currencies` holds `of(String)` and constants for the G10 currencies: USD, EUR,
+  JPY, GBP, CHF, AUD, CAD, NZD, SEK, NOK. Constants are only ever added, since
+  removing one is a breaking change.
 
 ### Out of scope
 
@@ -97,3 +98,5 @@ being stored in the schema.
   (considered and declined: a `sint64` fraction in 10^-18 units).
 - 2026-10-23 — user decision, replacing the previous one: support new currencies
   such as Ether now. `nanos` (field `3`, reserved) becomes `sint64 attos = 5`.
+- 2026-10-23 — user decision: `Currencies` constants cover the G10 currencies
+  (adds NZD, SEK, NOK); the list may grow later.

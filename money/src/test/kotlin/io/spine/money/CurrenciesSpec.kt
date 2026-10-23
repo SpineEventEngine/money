@@ -63,7 +63,7 @@ internal class CurrenciesSpec {
     }
 
     @Test
-    fun `provide constants for widely used currencies`() {
+    fun `provide constants for the G10 currencies`() {
         Currencies.USD.code shouldBe "USD"
         Currencies.EUR.code shouldBe "EUR"
         Currencies.JPY.code shouldBe "JPY"
@@ -71,6 +71,9 @@ internal class CurrenciesSpec {
         Currencies.CHF.code shouldBe "CHF"
         Currencies.AUD.code shouldBe "AUD"
         Currencies.CAD.code shouldBe "CAD"
+        Currencies.NZD.code shouldBe "NZD"
+        Currencies.SEK.code shouldBe "SEK"
+        Currencies.NOK.code shouldBe "NOK"
     }
 
     @Nested inner class
