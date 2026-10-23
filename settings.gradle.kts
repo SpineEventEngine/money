@@ -12,6 +12,6 @@
  * and limitations under the License.
  */
 
-rootProject.name = "spine-money"
+rootProject.name = "money"
 
 include("money")
